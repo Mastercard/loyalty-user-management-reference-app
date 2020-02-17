@@ -150,6 +150,6 @@ Authentication schemes defined for the API:
 It's recommended to create an instance of `ApiClient` per thread in a multithreaded environment to avoid any potential issues.
 
 ## Author
-
-Loyalty_Technology_Solutions_Scrum_Vulcans@mastercard.com
+- Name: **Mastercard**
+- Contact: **apisupport@mastercard.com**
 
