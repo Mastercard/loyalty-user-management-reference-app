@@ -1,8 +1,0 @@
-{ 
-    "groupId" : "com.mastercard.developer",
-    "artifactId" : "mastercard-loyalty-enrollment-client",
-    "artifactVersion" : "1.0.0",
-    "invokerPackage" : "com.mastercard.developer.mastercard_loyalty_enrollment_client",
-    "apiPackage" : "com.mastercard.developer.mastercard_loyalty_enrollment_client.api",
-    "modelPackage" : "com.mastercard.developer.mastercard_loyalty_enrollment_client.model"
-}
