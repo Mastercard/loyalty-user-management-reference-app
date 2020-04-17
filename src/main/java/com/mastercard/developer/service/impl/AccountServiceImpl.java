@@ -3,16 +3,18 @@ package com.mastercard.developer.service.impl;
 import com.mastercard.developer.exception.ServiceException;
 import com.mastercard.developer.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
+import org.openapitools.client.JSON;
 import org.openapitools.client.api.AccountApi;
 import org.openapitools.client.model.AccountEnrollRequest;
 import org.openapitools.client.model.AccountResponse;
 import org.openapitools.client.model.AccountSearchRequest;
 import org.openapitools.client.model.AccountSearchResponse;
 import org.openapitools.client.model.AccountUpdateRequest;
-import org.openapitools.client.model.PagedResponseAccountSearchResponse;
+import org.openapitools.client.model.Errors;
+import org.openapitools.client.model.PagedAccountSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +26,13 @@ public class AccountServiceImpl implements AccountService {
 
     private AccountApi accountApi;
 
+    private JSON json;
+
     @Autowired
     public AccountServiceImpl(ApiClient apiClient) {
         log.info("-->> INITIALIZING ACCOUNT API");
         accountApi = new AccountApi(apiClient);
+        json = new JSON();
     }
 
     /**
@@ -46,13 +51,13 @@ public class AccountServiceImpl implements AccountService {
         try {
             log.info("<-- CALLING ACCOUNT ENROLLMENT ENDPOINT -->");
             AccountResponse accountEnrollResponse = accountApi.enrollAccount(accountEnrollRequest);
-            Assert.assertNotNull("Missing object 'accountEnrollResponse' when calling enrollAccount(Async)", accountEnrollResponse);
-            Assert.assertNotNull("Missing Mastercard generated unique Account's 'id' when calling enrollAccount(Async)", accountEnrollResponse.getReferenceId());
+            Assertions.assertNotNull(accountEnrollResponse, "Missing object 'accountEnrollResponse' when calling enrollAccount(Async)");
+            Assertions.assertNotNull(accountEnrollResponse.getReferenceId(), "Missing Mastercard generated unique Account's 'id' when calling enrollAccount(Async)");
             log.info("<-- ACCOUNT ENROLLED SUCCESSFULLY -->");
             return accountEnrollResponse;
         } catch (ApiException e) {
             log.error("<<-- ACCOUNT ENROLLMENT FAILED -->>");
-            throw new ServiceException(e.getMessage());
+            throw new ServiceException(e.getMessage(), deserializeErrors(e.getResponseBody()));
         }
     }
 
@@ -63,22 +68,22 @@ public class AccountServiceImpl implements AccountService {
      * Success Response: 200(OK)
      * Error Response: 4XX or 5XX
      *
-     * @param id Mastercard generated unique identifier (required)
+     * @param referenceId Mastercard generated unique identifier (required)
      * @return An instance of AccountSearchResponse
      * @throws ServiceException If error occurred while calling find account endpoint
      */
     @Override
-    public AccountSearchResponse findById(String id) throws ServiceException {
+    public AccountSearchResponse findById(String referenceId) throws ServiceException {
         try {
             log.info("<-- CALLING FIND ACCOUNT ENDPOINT BY MASTERCARD GENERATED UNIQUE ID -->");
-            AccountSearchResponse accountFindResponse = accountApi.findAccount(id);
-            Assert.assertNotNull("Missing object 'accountFindResponse' when calling findAccount(Async)", accountFindResponse);
-            Assert.assertNotNull("Missing Mastercard generated unique Account's 'id' when calling findAccount(Async)", accountFindResponse.getReferenceId());
+            AccountSearchResponse accountFindResponse = accountApi.findAccount(referenceId);
+            Assertions.assertNotNull(accountFindResponse, "Missing object 'accountFindResponse' when calling findAccount(Async)");
+            Assertions.assertNotNull(accountFindResponse.getReferenceId(), "Missing Mastercard generated unique Account's 'id' when calling findAccount(Async)");
             log.info("<-- ACCOUNT FOUND SUCCESSFULLY -->");
             return accountFindResponse;
         } catch (ApiException e) {
             log.error("<<-- ACCOUNT FIND FAILED -->>");
-            throw new ServiceException(e.getMessage());
+            throw new ServiceException(e.getMessage(), deserializeErrors(e.getResponseBody()));
         }
     }
 
@@ -92,22 +97,22 @@ public class AccountServiceImpl implements AccountService {
      * @param accountSearchRequest Account search request (required)
      * @param limit                Number of records per page. (optional)
      * @param offset               Result page you want to retrieve (0..N) (optional)
-     * @return An list of AccountSearchResponse instances
+     * @return An instance of PagedAccountSearchResponse
      * @throws ServiceException If error occurred while calling account search endpoint
      */
     @Override
-    public List<AccountSearchResponse> search(AccountSearchRequest accountSearchRequest, Integer limit, Integer offset) throws ServiceException {
+    public PagedAccountSearchResponse search(AccountSearchRequest accountSearchRequest, Integer limit, Integer offset) throws ServiceException {
         try {
             log.info("<-- CALLING ACCOUNT SEARCH ENDPOINT -->");
-            PagedResponseAccountSearchResponse pagedAccountSearchResponse = accountApi.searchAccount(accountSearchRequest, limit, offset);
-            Assert.assertNotNull("Missing object 'pagedAccountSearchResponse' when calling searchAccount(Async)", pagedAccountSearchResponse);
-            List<AccountSearchResponse> searchResponses = pagedAccountSearchResponse.getItems();
-            Assert.assertNotNull("Missing Account search response items", searchResponses);
+            PagedAccountSearchResponse pagedAccountSearchResponse = accountApi.searchAccount(accountSearchRequest, limit, offset);
+            Assertions.assertNotNull(pagedAccountSearchResponse, "Missing object 'pagedAccountSearchResponse' when calling searchAccount(Async)");
+            List<AccountSearchResponse> searchList = pagedAccountSearchResponse.getItems();
+            Assertions.assertNotNull(searchList, "Missing Account search response items");
             log.info("<-- ACCOUNT FOUND SUCCESSFULLY -->");
-            return searchResponses;
+            return pagedAccountSearchResponse;
         } catch (ApiException e) {
             log.error("<<-- ACCOUNT SEARCH FAILED -->>");
-            throw new ServiceException(e.getMessage());
+            throw new ServiceException(e.getMessage(), deserializeErrors(e.getResponseBody()));
         }
     }
 
@@ -118,23 +123,27 @@ public class AccountServiceImpl implements AccountService {
      * Success Response: 200(OK)
      * Error Response: 4XX or 5XX
      *
-     * @param id                   Mastercard generated unique identifier (required)
+     * @param referenceId          Mastercard generated unique identifier (required)
      * @param accountUpdateRequest Account update request (required)
      * @return An instance of AccountResponse
      * @throws ServiceException If error occurred while calling account update endpoint
      */
     @Override
-    public AccountResponse update(String id, AccountUpdateRequest accountUpdateRequest) throws ServiceException {
+    public AccountResponse update(String referenceId, AccountUpdateRequest accountUpdateRequest) throws ServiceException {
         try {
             log.info("<-- CALLING ACCOUNT UPDATE ENDPOINT -->");
-            AccountResponse accountUpdateResponse = accountApi.updateAccount(id, accountUpdateRequest);
-            Assert.assertNotNull("Missing object 'accountUpdateResponse' when calling updateAccount(Async)", accountUpdateResponse);
-            Assert.assertNotNull("Missing Mastercard generated unique Account's 'id' when calling updateAccount(Async)", accountUpdateResponse.getReferenceId());
+            AccountResponse accountUpdateResponse = accountApi.updateAccount(referenceId, accountUpdateRequest);
+            Assertions.assertNotNull(accountUpdateResponse, "Missing object 'accountUpdateResponse' when calling updateAccount(Async)");
+            Assertions.assertNotNull(accountUpdateResponse.getReferenceId(), "Missing Mastercard generated unique Account's 'id' when calling updateAccount(Async)");
             log.info("<-- ACCOUNT UPDATED SUCCESSFULLY -->");
             return accountUpdateResponse;
         } catch (ApiException e) {
             log.error("<<-- ACCOUNT UPDATE FAILED -->>");
-            throw new ServiceException(e.getMessage());
+            throw new ServiceException(e.getMessage(), deserializeErrors(e.getResponseBody()));
         }
+    }
+
+    private Errors deserializeErrors(String body) {
+        return json.deserialize(body, Errors.class);
     }
 }

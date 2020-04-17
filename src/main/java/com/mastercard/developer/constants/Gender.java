@@ -1,5 +1,9 @@
 package com.mastercard.developer.constants;
 
+/**
+ * These are actual allowable ISO codes of Gender
+ */
+
 public enum Gender {
 
     NOT_KNOWN("0"),

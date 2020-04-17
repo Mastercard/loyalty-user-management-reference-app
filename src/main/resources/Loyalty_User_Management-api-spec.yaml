@@ -17,7 +17,6 @@ tags:
   - name: Account
     description: Operations related to an Account
 servers:
-  - url: https://stage.api.mastercard.com/loyalty/rewards/enrollment
   - url: https://api.mastercard.com/loyalty/rewards/enrollment
 paths:
   /users:
@@ -85,7 +84,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PagedResponse_UserSearchResponse_"
+                $ref: "#/components/schemas/Paged_UserSearchResponse_"
         "400":
           description: Bad Request
           content:
@@ -218,7 +217,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PagedResponse_AccountSearchResponse_"
+                $ref: "#/components/schemas/Paged_AccountSearchResponse_"
         "400":
           description: Bad Request
           content:
@@ -663,7 +662,7 @@ components:
           description: Allows the user to holds VIP status, default value is false
         employee:
           type: boolean
-          example: false
+          example: true
           description: Allows the user to holds EMPLOYEE status, default value is false
         genericIdentification:
           type: string
@@ -771,7 +770,7 @@ components:
           description: Allows the user to holds VIP status, default value is false
         employee:
           type: boolean
-          example: false
+          example: true
           description: Allows the user to holds EMPLOYEE status, default value is false
         genericIdentification:
           type: string
@@ -853,7 +852,7 @@ components:
           description: Allows the user to holds VIP status, default value is false
         employee:
           type: boolean
-          example: false
+          example: true
           description: Allows the user to holds EMPLOYEE status, default value is false
         genericIdentification:
           type: string
@@ -878,7 +877,7 @@ components:
           example: 2a53135b-c1f2-4cec-88a9-b0941304d9d7
           description: Unique User identifier assigned by Mastercard and provided to company at the time of enrollment.
       title: UserUpdateResponse
-    PagedResponse_AccountSearchResponse_:
+    Paged_AccountSearchResponse_:
       type: object
       properties:
         count:
@@ -897,8 +896,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AccountSearchResponse"
-      title: PagedResponse_AccountSearchResponse_
-    PagedResponse_UserSearchResponse_:
+      title: Paged_AccountSearchResponse_
+    Paged_UserSearchResponse_:
       type: object
       properties:
         count:
@@ -917,4 +916,4 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/UserSearchResponse"
-      title: PagedResponse_UserSearchResponse_
+      title: Paged_UserSearchResponse_

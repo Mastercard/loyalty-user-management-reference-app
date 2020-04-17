@@ -11,7 +11,9 @@
   * [Build and Execute](#build-and-execute)
 - [Use Cases](#use-cases)
 - [API Reference](#api-reference)
+  * [Authorization](#authorization)
   * [Request Examples](#request-examples)
+  * [Recommendation](#recommendation)
 - [Support](#support)
 - [License](#license)
 
@@ -58,8 +60,6 @@ Both the approaches require consumer key and .p12 file as received from [Masterc
 [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) generates API client libraries from [OpenAPI Specs](https://github.com/OAI/OpenAPI-Specification). 
 It provides generators and library templates for supporting multiple languages and frameworks.
 
-The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can use when configuring your API client. These classes will take care of adding the correct `Authorization` header before sending the request.
-
 See also:
 * [OpenAPI Generator (maven Plugin)](https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin)
 * [OpenAPI Generator (executable)](https://mvnrepository.com/artifact/org.openapitools/openapi-generator-cli)
@@ -78,8 +78,7 @@ See also:
                 <goal>generate</goal>
             </goals>
             <configuration>
-                <inputSpec>${project.basedir}/src/main/resources/Loyalty_User_Management-api-spec.yaml
-                </inputSpec>
+                <inputSpec>${project.basedir}/src/main/resources/Loyalty_User_Management-api-spec.yaml</inputSpec>
                 <generatorName>java</generatorName>
                 <library>okhttp-gson</library>
                 <generateApiTests>false</generateApiTests>
@@ -118,226 +117,120 @@ When the project builds successfully you can then run the following command to s
 `java -jar target/loyalty-user-management-reference-1.0.0.jar`
 <br/><br/>
 ## Use Cases <a name="use-cases"></a>
+### User
 > Case 1: [USER ENROLLMENT](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/user-enrollment/)
-  - Cardholder’s or User’s enrollment into Mastercard Rewards platform.
-  - Expected Request
-  ```json
-  {
-    "companyId": "611532",
-    "userId": "C02333333325",
-    "firstName": "John",
-    "lastName": "Smith",
-    "motherMaidenName": "Jennifer",
-    "gender": 1,
-    "birthDate": "1975-03-11",
-    "nationalIdentifier": "324-56-7574",
-    "businessPhoneNumber": "+1(0)1234567890",
-    "mobilePhoneNumber": "+1(0)1234567891",
-    "homePhoneNumber": "+1(0)1234567892",
-    "emailAddress": "john.smith@mastercard.com",
-    "vip": true,
-    "employee": false,
-    "genericIdentification": "Duster",
-    "genericIdentificationDescription": "Pet's name",
-    "address": {
-      "addressLine1": "10 Upper Bank Street",
-      "addressLine2": "Chesterfield",
-      "addressLine3": "Canary Wharf",
-      "addressLine4": "Tower Hamlets",
-      "city": "London",
-      "countryCode": "ENG",
-      "postalCode": "E1 6AN",
-      "stateProvinceCode": "JS"
-    }
-  }
-  ```
-  - Response
-  ```json
-  {
-    "referenceId": "2a53135b-c1f2-4cec-88a9-b0941304d9d7"
-  }
-  ```
-> Case 2: [USER WITH ACCOUNT ENROLLMENT](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/user-account-enrollment/)
-  - Cardholder’s or User’s with Account enrollment into Mastercard Rewards platform.
-  - Expected Request
-  ```json
-  {
-    "companyId": "611532",
-    "userId": "C02333333325",
-    "firstName": "John",
-    "lastName": "Smith",
-    "motherMaidenName": "Jennifer",
-    "gender": 1,
-    "birthDate": "1975-03-11",
-    "nationalIdentifier": "324-56-7574",
-    "businessPhoneNumber": "+1(0)1234567890",
-    "mobilePhoneNumber": "+1(0)1234567891",
-    "homePhoneNumber": "+1(0)1234567892",
-    "emailAddress": "john.smith@mastercard.com",
-    "vip": true,
-    "employee": false,
-    "genericIdentification": "Duster",
-    "genericIdentificationDescription": "Pet's name",
-    "address": {
-      "addressLine1": "10 Upper Bank Street",
-      "addressLine2": "Chesterfield",
-      "addressLine3": "Canary Wharf",
-      "addressLine4": "Tower Hamlets",
-      "city": "London",
-      "countryCode": "ENG",
-      "postalCode": "E1 6AN",
-      "stateProvinceCode": "JS"
-    },
-    "account": {
-      "accountIdType": "ACCOUNT_NUMBER",
-      "accountId": 5330333671236516,
-      "status": "NEW",
-      "productCode": "7274VCC",
-      "programIdentifier": "ZXSzM",
-      "openDate": "2015-01-01",
-      "enrollmentDate": "2018-03-11"
-    }
-  }
-  ```
-  - Response
-  ```json
-  {
-    "referenceId": "2a53135b-c1f2-4cec-88a9-b0941304d9d7",
-    "account": {
-      "referenceId": "d8753780-62d1-4775-9549-8ed92c48c290"
-    }
-  }
-  ```
-> Case 3: [USER SEARCH](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/user-search/)
-  - Retrieves a user’s details based on search criteria or Mastercard generated unique Id.
-  - Expected Request
-  ```json
-  {
-    "companyId": "611532",
-    "userId": "C02333333325"
-  }
-  ```
-  - Response
-  ```json
-  {
-    "count": 1,
-    "limit": 25,
-    "offset": 0,
-    "total": 1,
-    "items": [
-      {
-        "companyId": "611532",
-        "userId": "C02333333325",
-        "firstName": "John",
-        "lastName": "Smith",
-        "motherMaidenName": "Jennifer",
-        "gender": 1,
-        "birthDate": "1975-03-11",
-        "nationalIdentifier": "324-56-7574",
-        "businessPhoneNumber": "+1(0)1234567890",
-        "mobilePhoneNumber": "+1(0)1234567891",
-        "homePhoneNumber": "+1(0)1234567892",
-        "emailAddress": "john.smith@mastercard.com",
-        "vip": true,
-        "employee": false,
-        "genericIdentification": "Duster",
-        "genericIdentificationDescription": "Pet's name",
-        "address": {
-          "addressLine1": "10 Upper Bank Street",
-          "addressLine2": "Chesterfield",
-          "addressLine3": "Canary Wharf",
-          "addressLine4": "Tower Hamlets",
-          "city": "London",
-          "countryCode": "ENG",
-          "postalCode": "E1 6AN",
-          "stateProvinceCode": "JS"
-        },
-        "referenceId": "2a53135b-c1f2-4cec-88a9-b0941304d9d7"
-      }
-    ]
-  }
-  ```
-> Case 4: [ACCOUNT ENROLLMENT](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/account-enrollment/)
-  - User’s Account enrollment into Mastercard Rewards platform.
-  - Expected Request
-  ```json
-  {
-    "companyId": "611532",
-    "userId": "C02333333325",
-    "accountId": "5330333671236516",
-    "accountIdType": "ACCOUNT_NUMBER",
-    "status": "NEW",
-    "productCode": "7274VCC",
-    "programIdentifier": "ZXSzM",
-    "openDate": "2015-01-01",
-    "enrollmentDate": "2018-03-11"
-  }
-  ```
-  - Response
-  ```json
-  {
-    "referenceId": "d8753780-62d1-4775-9549-8ed92c48c290"
-  }
-  ```
-> Case 5: [ACCOUNT SEARCH](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/account-search/)
-  - Retrieves a user’s account details based on search criteria or Mastercard generated unique Id.
-  - Expected Request
-  ```json
-  {
-    "companyId": "611532",
-    "accountId": "5330333671236516",
-    "accountIdType": "ACCOUNT_NUMBER",
-    "programIdentifier": "ZXSzM"
-  }
-  ```
-  - Response
-  ```json
-  {
-    "count": 1,
-    "limit": 25,
-    "offset": 0,
-    "total": 1,
-    "items": [
-      {
-        "companyId": "611532",
-        "userId": "C02333333325",
-        "accountId": "5330333671236516",
-        "accountIdType": "ACCOUNT_NUMBER",
-        "status": "NEW",
-        "productCode": "7274VCC",
-        "programIdentifier": "ZXSzM",
-        "openDate": "2015-01-01",
-        "enrollmentDate": "2018-03-11",
-        "referenceId": "d8753780-62d1-4775-9549-8ed92c48c290"
-      }
-    ]
-  }
-  ```
+  - User’s demographic details enrollment into Mastercard Rewards platform.
+  - Refer to model classes for field level information.
 
+    | URL | Method | Request | Response |
+    | :-- | :----- | :------ | :------- |
+    | `/users` | POST | [UserEnrollRequest](docs/UserEnrollRequest.md) | [UserEnrollResponse](docs/UserEnrollResponse.md) |
+  
+> Case 2: [USER WITH ACCOUNT ENROLLMENT](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/user-account-enrollment/)
+  - User’s demographic with Account details enrollment into Mastercard Rewards platform.
+  - Refer to model classes for field level information.
+  
+    | URL | Method | Request | Response |
+    | :-- | :----- | :------ | :------- |
+    | `/users` | POST | [UserEnrollRequest](docs/UserEnrollRequest.md) | [UserEnrollResponse](docs/UserEnrollResponse.md) |
+    
+> Case 3: [USER SEARCH](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/user-search/)
+  - Retrieves a User’s details from Mastercard Rewards platform based on search criteria.
+  - Refer to model classes for field level information.
+    
+    | URL | Method | Request | Response |
+    | :-- | :----- | :------ | :------- |
+    | `/users/searches` | POST | [UserSearchRequest](docs/UserSearchRequest.md) | [PagedUserSearchResponse](docs/PagedUserSearchResponse.md) |
+
+> Case 4: [USER SEARCH BY ID](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/user-search/)
+  - Retrieves a User’s details from Mastercard Rewards platform by Mastercard generated unique Id.
+  - Refer to model classes for field level information.
+    
+    | URL | Method | Request | Response |
+    | :-- | :----- | :------ | :------- |
+    | `/users/{reference_id}` | GET | - | [UserSearchResponse](docs/UserSearchResponse.md) |
+    
+> Case 5: [USER UPDATE](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/user-enrollment/)
+  - Updates User’s demographic details into Mastercard Rewards platform.
+  - Refer to model classes for field level information.
+
+    | URL | Method | Request | Response |
+    | :-- | :----- | :------ | :------- |
+    | `/users/{reference_id}` | PUT | [UserUpdateRequest](docs/UserUpdateRequest.md) | [UserUpdateResponse](docs/UserUpdateResponse.md) |
+
+### Account          
+> Case 1: [ACCOUNT ENROLLMENT](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/account-enrollment/)
+  - User’s Account details enrollment into Mastercard Rewards platform.
+  - Refer to model classes for field level information.
+      
+    | URL | Method | Request | Response |
+    | :-- | :----- | :------ | :------- |
+    | `/accounts` | POST | [AccountEnrollRequest](docs/AccountEnrollRequest.md) | [AccountResponse](docs/AccountResponse.md) |
+      
+> Case 2: [ACCOUNT SEARCH](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/account-search/)
+  - Retrieves a User’s account details from Mastercard Rewards platform based on search criteria.
+  - Refer to model classes for field level information.
+        
+    | URL | Method | Request | Response |
+    | :-- | :----- | :------ | :------- |
+    | `/accounts/searches` | POST | [AccountSearchRequest](docs/AccountSearchRequest.md) | [PagedAccountSearchResponse](docs/PagedAccountSearchResponse.md) |
+
+> Case 3: [ACCOUNT SEARCH BY ID](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/account-search/)
+  - Retrieves a User’s account details from Mastercard Rewards platform by Mastercard generated unique Id.
+  - Refer to model classes for field level information.
+        
+    | URL | Method | Request | Response |
+    | :-- | :----- | :------ | :------- |
+    | `/accounts/{reference_id}` | GET | - | [AccountSearchResponse](docs/AccountSearchResponse.md) |
+
+> Case 4: [ACCOUNT STATUS UPDATE](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/account-enrollment/)
+  - Updates User's account status into Mastercard Rewards Platform
+  - Refer to model classes for field level information.
+        
+    | URL | Method | Request | Response |
+    | :-- | :----- | :------ | :------- |
+    | `/accounts/{reference_id}` | PUT | [AccountUpdateRequest](docs/AccountUpdateRequest.md) | [AccountResponse](docs/AccountResponse.md) |
+
+> Case 5: [ERROR HANDLING](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/error-responses/)
+  - The operation can fail for various reasons like formatting, field length exceeds, etc.
+  - This use case just shows one of the example of such failures.
+  - For the complete list of application specific error codes, refer to [Application Error Codes](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/application-error-codes/).
+  - Also refer to model class [Errors](docs/Errors.md) for field level information.    
+    
 <br/><br/>
 ## API Reference <a name="api-reference"></a>
 To develop a client application that consumes a RESTful Loyalty User Management API with Spring Boot, refer below documentation.
 
 | API | Endpoint | HTTP Method | Description |
 | :-- | :------- | :---------- | :---------- |
-| [User Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users` | POST | Cardholder’s or User's enrollment into Mastercard Rewards platform. |
-| [User with Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users` | POST | Cardholder’s or User's with Account enrollment into Mastercard Rewards platform. |
-| [User Find By Id](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/{reference_id}` | GET | Retrieves a cardholder’s details by Mastercard generated unique Id. |
-| [User Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/searches` | POST | Retrieves a cardholder’s details based on search criteria. |
-| [User Demographic Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/{reference_id}` | PUT | Updates existing cardholder’s demographic details. |
-| [Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts` | POST | Cardholder’s Account enrollment into Mastercard Rewards platform. |
-| [Account Find By Id](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/{reference_id}` | GET | Retrieves a cardholder’s account details by Mastercard generated unique Id. |
-| [Account Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/searches` | POST | Retrieves a cardholder’s account details based on search criteria. |
-| [Account Status Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/{reference_id}` | PUT | Updates existing cardholder’s account status. |   
+| [User Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users` | POST | User's demographic details enrollment into Mastercard Rewards platform. |
+| [User with Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users` | POST | User's demographic with Account details enrollment into Mastercard Rewards platform. |
+| [User Find By Id](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/{reference_id}` | GET | Retrieves a User’s details by Mastercard generated unique Id. |
+| [User Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/searches` | POST | Retrieves a User’s details based on search criteria. |
+| [User Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/{reference_id}` | PUT | Updates existing User’s demographic details. |
+| [Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts` | POST | User’s account details enrollment into Mastercard Rewards platform. |
+| [Account Find By Id](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/{reference_id}` | GET | Retrieves a User’s account details by Mastercard generated unique Id. |
+| [Account Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/searches` | POST | Retrieves a User’s account details based on search criteria. |
+| [Account Status Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/{reference_id}` | PUT | Updates existing User’s account status. |   
+
+### Authorization <a name="authorization"></a>
+The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can use when configuring your API client. These classes will take care of adding the correct `Authorization` header before sending the request.
+<br/>
 
 ### Request Examples <a name="request-examples"></a>
 You can change the default input passed to APIs, modify values in following files,
 * `com.mastercard.developer.example.UserExample.java`
 * `com.mastercard.developer.example.AccountExample.java`
-<br/><br/>
+<br/>
+
+### Recommendation <a name="recommendation"></a>
+It is recommended to create an instance of `ApiClient` per thread in a multithreaded environment to avoid any potential issues.
+<br/>
+
 ## Support <a name="support"></a>
 If you would like further information, please send an email to LoyaltyPromotions.Support@mastercard.com
-<br/><br/>
+<br/>
+
 ## License <a name="license"></a>
 Copyright 2020 Mastercard
  
