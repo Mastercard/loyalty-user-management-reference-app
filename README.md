@@ -38,7 +38,7 @@ Both the approaches require consumer key and .p12 file as received from [Masterc
 * [Spring Boot 2.2+](https://spring.io/projects/spring-boot)
 * [Apache Maven 3.3+](https://maven.apache.org/download.cgi)
 * Set up the `JAVA_HOME` environment variable to match the location of your Java installation.
-<br/><br/>
+
 ### Configuration <a name="configuration"></a>
 * Create an account at [Mastercard Developers](https://developer.mastercard.com/account/sign-up).  
 * Create a new project and add `Loyalty User Management` API to your project.   
@@ -94,7 +94,6 @@ See also:
     </executions>
 </plugin>
 ```
-<br/>
 
 #### Generating The API Client Sources
 Now that you have all the dependencies you need, you can generate the sources. To do this, use one of the following two methods:
@@ -106,9 +105,9 @@ Now that you have all the dependencies you need, you can generate the sources. T
 * **Method 2**<br/>
   In the same menu, navigate to the commands **({Project name} > Lifecycle)**, select `clean` and `compile` then click the icon `Run Maven Build`. 
 
-`Using Terminal`<br/>
+`Using Terminal`
 * Navigate to the root directory of the project within a terminal window and execute `mvn clean compile` command.
-<br/><br/>
+
 ### Build and Execute <a name="build-and-execute"></a>
 Once you’ve added the correct properties, we can build the application. We can do this by navigating to the project’s base directory from the terminal and running the following command
 
@@ -117,7 +116,7 @@ Once you’ve added the correct properties, we can build the application. We can
 When the project builds successfully you can then run the following command to start the project
 
 `java -jar target/loyalty-user-management-reference-1.0.0.jar`
-<br/><br/>
+
 ## Use Cases <a name="use-cases"></a>
 ### User
 > Case 1: [USER ENROLLMENT](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/user-enrollment/)
@@ -199,7 +198,6 @@ When the project builds successfully you can then run the following command to s
   - For the complete list of application specific error codes, refer to [Application Error Codes](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/application-error-codes/).
   - Also refer to model class [Errors](docs/Errors.md) for field level information.    
     
-<br/><br/>
 ## API Reference <a name="api-reference"></a>
 To develop a client application that consumes a RESTful Loyalty User Management API with Spring Boot, refer below documentation.
 
@@ -217,21 +215,17 @@ To develop a client application that consumes a RESTful Loyalty User Management 
 
 ### Authorization <a name="authorization"></a>
 The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can use when configuring your API client. These classes will take care of adding the correct `Authorization` header before sending the request.
-<br/>
 
 ### Request Examples <a name="request-examples"></a>
 You can change the default input passed to APIs, modify values in following files,
 * `com.mastercard.developer.example.UserExample.java`
 * `com.mastercard.developer.example.AccountExample.java`
-<br/>
 
 ### Recommendation <a name="recommendation"></a>
 It is recommended to create an instance of `ApiClient` per thread in a multithreaded environment to avoid any potential issues.
-<br/>
 
 ## Support <a name="support"></a>
 If you would like further information, please send an email to LoyaltyPromotions.Support@mastercard.com
-<br/>
 
 ## License <a name="license"></a>
 Copyright 2020 Mastercard
