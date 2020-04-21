@@ -5,9 +5,9 @@ info:
   title: Loyalty User Management
   termsOfService: https://developer.mastercard.com/terms-of-use
   contact:
-    name: Loyalty Technology Solutions
+    name: Mastercard Developer Zone
     url: https://developer.mastercard.com
-    email: LoyaltyPromotions.Support@mastercard.com
+    email: apisupport@mastercard.com
   license:
     name: Mastercard Developer Zone Support
     url: https://developer.mastercard.com/support
