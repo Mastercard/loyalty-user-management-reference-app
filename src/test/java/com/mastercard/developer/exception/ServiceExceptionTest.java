@@ -41,7 +41,7 @@ class ServiceExceptionTest {
                             assertEquals(SOURCE, error.getSource());
                             assertEquals(REASON_CODE, error.getReasonCode());
                             assertEquals(DESCRIPTION, error.getDescription());
-                            assertFalse(error.getRecoverable());
+                            Assertions.assertFalse(error::getRecoverable);
                         });
                     }
             );
@@ -54,14 +54,9 @@ class ServiceExceptionTest {
 
     private Errors getCustomError() {
         Error error = new Error();
-        error.source(SOURCE)
-                .reasonCode(REASON_CODE)
-                .description(DESCRIPTION)
-                .recoverable(false);
-
+        error.source(SOURCE).reasonCode(REASON_CODE).description(DESCRIPTION).recoverable(false);
         ErrorList errorList = new ErrorList();
         errorList.addErrorItem(error);
-
         return new Errors().errors(errorList);
     }
 }

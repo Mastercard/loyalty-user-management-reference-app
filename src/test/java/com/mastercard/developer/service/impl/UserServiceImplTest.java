@@ -1,7 +1,9 @@
 package com.mastercard.developer.service.impl;
 
 import com.mastercard.developer.example.UserExample;
+import com.mastercard.developer.exception.ServiceException;
 import okhttp3.Call;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,7 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
 import org.openapitools.client.ApiResponse;
+import org.openapitools.client.model.Error;
 import org.openapitools.client.model.PagedUserSearchResponse;
 import org.openapitools.client.model.UserEnrollResponse;
 import org.openapitools.client.model.UserSearchResponse;
@@ -18,10 +22,12 @@ import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.mastercard.developer.response.MockAccountResponses.ACCOUNT_ID;
 import static com.mastercard.developer.response.MockUserResponses.USER_ID;
 import static com.mastercard.developer.response.MockUserResponses.getEnrollResponse;
+import static com.mastercard.developer.response.MockUserResponses.getErrorResponseBody;
 import static com.mastercard.developer.response.MockUserResponses.getPagedSearchResponse;
 import static com.mastercard.developer.response.MockUserResponses.getSearchResponse;
 import static com.mastercard.developer.response.MockUserResponses.getUpdateResponse;
@@ -165,5 +171,25 @@ class UserServiceImplTest {
                 () -> assertNotNull(updateResponse),
                 () -> assertEquals(USER_ID, updateResponse.getReferenceId())
         );
+    }
+
+    @Test
+    void testErrorResponse() throws Exception {
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenThrow(new ApiException(400, new HashMap<>(), getErrorResponseBody()));
+
+        ServiceException serviceException = Assertions.assertThrows(ServiceException.class, () -> userService.enrollUserAndAccount(UserExample.getUserAndAccountEnrollRequest()));
+
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
+
+        Assertions.assertNotNull(serviceException.getServiceErrors());
+        List<Error> errors = serviceException.getServiceErrors().getErrors().getError();
+        Assertions.assertFalse(errors.isEmpty());
+        errors.forEach(error -> {
+            Assertions.assertEquals("Loyalty-Enrollment", error.getSource());
+            Assertions.assertEquals("DUPLICATE_REQUEST", error.getReasonCode());
+            Assertions.assertEquals("The User has already exists for the given Company ID.", error.getDescription());
+            Assertions.assertFalse(error::getRecoverable);
+        });
     }
 }

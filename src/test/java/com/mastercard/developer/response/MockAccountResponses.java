@@ -40,4 +40,20 @@ public class MockAccountResponses {
                 .total(1L)
                 .items(Lists.newArrayList(getSearchResponse()));
     }
+
+    public static String getErrorResponseBody() {
+        return "{\n" +
+                "  \"Errors\": {\n" +
+                "    \"Error\": [\n" +
+                "      {\n" +
+                "        \"Source\": \"Loyalty-Enrollment\",\n" +
+                "        \"ReasonCode\": \"DUPLICATE_REQUEST\",\n" +
+                "        \"Description\": \"The Account already exists for the given User and Product.\",\n" +
+                "        \"Recoverable\": false,\n" +
+                "        \"Details\": null\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
+    }
 }

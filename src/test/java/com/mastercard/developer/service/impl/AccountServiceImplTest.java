@@ -1,7 +1,9 @@
 package com.mastercard.developer.service.impl;
 
 import com.mastercard.developer.example.AccountExample;
+import com.mastercard.developer.exception.ServiceException;
 import okhttp3.Call;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,17 +11,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
 import org.openapitools.client.ApiResponse;
 import org.openapitools.client.model.AccountResponse;
 import org.openapitools.client.model.AccountSearchResponse;
+import org.openapitools.client.model.Error;
 import org.openapitools.client.model.PagedAccountSearchResponse;
 import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.mastercard.developer.response.MockAccountResponses.ACCOUNT_ID;
 import static com.mastercard.developer.response.MockAccountResponses.getEnrollOrUpdateResponse;
+import static com.mastercard.developer.response.MockAccountResponses.getErrorResponseBody;
 import static com.mastercard.developer.response.MockAccountResponses.getPagedSearchResponse;
 import static com.mastercard.developer.response.MockAccountResponses.getSearchResponse;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -131,5 +137,25 @@ class AccountServiceImplTest {
                 () -> assertNotNull(accountResponse),
                 () -> assertEquals(ACCOUNT_ID, accountResponse.getReferenceId())
         );
+    }
+
+    @Test
+    void testErrorResponse() throws Exception {
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenThrow(new ApiException(400, new HashMap<>(), getErrorResponseBody()));
+
+        ServiceException serviceException = Assertions.assertThrows(ServiceException.class, () -> accountService.enroll(AccountExample.getAccountEnrollRequest()));
+
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
+
+        Assertions.assertNotNull(serviceException.getServiceErrors());
+        List<Error> errors = serviceException.getServiceErrors().getErrors().getError();
+        Assertions.assertFalse(errors.isEmpty());
+        errors.forEach(error -> {
+            Assertions.assertEquals("Loyalty-Enrollment", error.getSource());
+            Assertions.assertEquals("DUPLICATE_REQUEST", error.getReasonCode());
+            Assertions.assertEquals("The Account already exists for the given User and Product.", error.getDescription());
+            Assertions.assertFalse(error::getRecoverable);
+        });
     }
 }

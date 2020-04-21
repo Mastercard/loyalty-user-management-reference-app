@@ -72,4 +72,20 @@ public class MockUserResponses {
                 .total(1L)
                 .items(Lists.newArrayList(getSearchResponse()));
     }
+
+    public static String getErrorResponseBody() {
+        return "{\n" +
+                "  \"Errors\": {\n" +
+                "    \"Error\": [\n" +
+                "      {\n" +
+                "        \"Source\": \"Loyalty-Enrollment\",\n" +
+                "        \"ReasonCode\": \"DUPLICATE_REQUEST\",\n" +
+                "        \"Description\": \"The User has already exists for the given Company ID.\",\n" +
+                "        \"Recoverable\": false,\n" +
+                "        \"Details\": null\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
+    }
 }
