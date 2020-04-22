@@ -12,6 +12,8 @@ import java.util.UUID;
 public class MockAccountResponses {
 
     public static final String ACCOUNT_ID = UUID.randomUUID().toString();
+    public static final String DUP_REQ_DESCRIPTION = "The Account already exists for the given User and Product.";
+    public static final String SER_ERR_DESCRIPTION = "Account unique Reference ID could not be found.";
 
     public static AccountResponse getEnrollOrUpdateResponse() {
         AccountResponse accountResponse = new AccountResponse();
@@ -39,21 +41,5 @@ public class MockAccountResponses {
                 .offset(0)
                 .total(1L)
                 .items(Lists.newArrayList(getSearchResponse()));
-    }
-
-    public static String getErrorResponseBody() {
-        return "{\n" +
-                "  \"Errors\": {\n" +
-                "    \"Error\": [\n" +
-                "      {\n" +
-                "        \"Source\": \"Loyalty-Enrollment\",\n" +
-                "        \"ReasonCode\": \"DUPLICATE_REQUEST\",\n" +
-                "        \"Description\": \"The Account already exists for the given User and Product.\",\n" +
-                "        \"Recoverable\": false,\n" +
-                "        \"Details\": null\n" +
-                "      }\n" +
-                "    ]\n" +
-                "  }\n" +
-                "}";
     }
 }

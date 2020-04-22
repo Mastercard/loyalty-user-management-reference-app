@@ -23,8 +23,14 @@ import org.springframework.http.HttpStatus;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import static com.mastercard.developer.response.MockAccountResponses.ACCOUNT_ID;
+import static com.mastercard.developer.response.MockUserResponses.DUP_REQ_DESCRIPTION;
+import static com.mastercard.developer.response.MockUserResponses.DUP_REQ_REASON_CODE;
+import static com.mastercard.developer.response.MockUserResponses.SER_ERR_DESCRIPTION;
+import static com.mastercard.developer.response.MockUserResponses.SER_ERR_REASON_CODE;
+import static com.mastercard.developer.response.MockUserResponses.SOURCE;
 import static com.mastercard.developer.response.MockUserResponses.USER_ID;
 import static com.mastercard.developer.response.MockUserResponses.getEnrollResponse;
 import static com.mastercard.developer.response.MockUserResponses.getErrorResponseBody;
@@ -174,8 +180,28 @@ class UserServiceImplTest {
     }
 
     @Test
-    void testErrorResponse() throws Exception {
-        when(apiClient.execute(any(Call.class), any(Type.class))).thenThrow(new ApiException(400, new HashMap<>(), getErrorResponseBody()));
+    void testEnrollUserErrorResponse() throws Exception {
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenThrow(new ApiException(400, new HashMap<>(), getErrorResponseBody(DUP_REQ_REASON_CODE, DUP_REQ_DESCRIPTION, false)));
+
+        ServiceException serviceException = Assertions.assertThrows(ServiceException.class, () -> userService.enrollUserOnly(UserExample.getUserEnrollRequest()));
+
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
+
+        Assertions.assertNotNull(serviceException.getServiceErrors());
+        List<Error> errors = serviceException.getServiceErrors().getErrors().getError();
+        Assertions.assertFalse(errors.isEmpty());
+        errors.forEach(error -> {
+            Assertions.assertEquals(SOURCE, error.getSource());
+            Assertions.assertEquals(DUP_REQ_REASON_CODE, error.getReasonCode());
+            Assertions.assertEquals(DUP_REQ_DESCRIPTION, error.getDescription());
+            Assertions.assertFalse(error::getRecoverable);
+        });
+    }
+
+    @Test
+    void testEnrollUserAndAccountErrorResponse() throws Exception {
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenThrow(new ApiException(400, new HashMap<>(), getErrorResponseBody(DUP_REQ_REASON_CODE, DUP_REQ_DESCRIPTION, false)));
 
         ServiceException serviceException = Assertions.assertThrows(ServiceException.class, () -> userService.enrollUserAndAccount(UserExample.getUserAndAccountEnrollRequest()));
 
@@ -186,9 +212,30 @@ class UserServiceImplTest {
         List<Error> errors = serviceException.getServiceErrors().getErrors().getError();
         Assertions.assertFalse(errors.isEmpty());
         errors.forEach(error -> {
-            Assertions.assertEquals("Loyalty-Enrollment", error.getSource());
-            Assertions.assertEquals("DUPLICATE_REQUEST", error.getReasonCode());
-            Assertions.assertEquals("The User has already exists for the given Company ID.", error.getDescription());
+            Assertions.assertEquals(SOURCE, error.getSource());
+            Assertions.assertEquals(DUP_REQ_REASON_CODE, error.getReasonCode());
+            Assertions.assertEquals(DUP_REQ_DESCRIPTION, error.getDescription());
+            Assertions.assertFalse(error::getRecoverable);
+        });
+    }
+
+    @Test
+    void testFindByIdErrorResponse() throws Exception {
+        when(apiClient.escapeString(anyString())).thenReturn(USER_ID);
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenThrow(new ApiException(400, new HashMap<>(), getErrorResponseBody(SER_ERR_REASON_CODE, SER_ERR_DESCRIPTION, false)));
+
+        ServiceException serviceException = Assertions.assertThrows(ServiceException.class, () -> userService.findById(UUID.randomUUID().toString()));
+
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
+
+        Assertions.assertNotNull(serviceException.getServiceErrors());
+        List<Error> errors = serviceException.getServiceErrors().getErrors().getError();
+        Assertions.assertFalse(errors.isEmpty());
+        errors.forEach(error -> {
+            Assertions.assertEquals(SOURCE, error.getSource());
+            Assertions.assertEquals(SER_ERR_REASON_CODE, error.getReasonCode());
+            Assertions.assertEquals(SER_ERR_DESCRIPTION, error.getDescription());
             Assertions.assertFalse(error::getRecoverable);
         });
     }

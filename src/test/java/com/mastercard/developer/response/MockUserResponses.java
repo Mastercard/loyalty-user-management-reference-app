@@ -15,6 +15,11 @@ import static com.mastercard.developer.response.MockAccountResponses.getEnrollOr
 public class MockUserResponses {
 
     public static final String USER_ID = UUID.randomUUID().toString();
+    public static final String SOURCE = "Loyalty-Enrollment";
+    public static final String DUP_REQ_REASON_CODE = "DUPLICATE_REQUEST";
+    public static final String DUP_REQ_DESCRIPTION = "The User has already exists for the given Company ID.";
+    public static final String SER_ERR_REASON_CODE = "SERVICE_ERROR";
+    public static final String SER_ERR_DESCRIPTION = "User unique Reference ID could not be found.";
 
     public static UserEnrollResponse getEnrollResponse(boolean addAccount) {
         UserEnrollResponse enrollResponse = new UserEnrollResponse();
@@ -73,15 +78,15 @@ public class MockUserResponses {
                 .items(Lists.newArrayList(getSearchResponse()));
     }
 
-    public static String getErrorResponseBody() {
+    public static String getErrorResponseBody(String reasonCode, String description, boolean recoverable) {
         return "{\n" +
                 "  \"Errors\": {\n" +
                 "    \"Error\": [\n" +
                 "      {\n" +
-                "        \"Source\": \"Loyalty-Enrollment\",\n" +
-                "        \"ReasonCode\": \"DUPLICATE_REQUEST\",\n" +
-                "        \"Description\": \"The User has already exists for the given Company ID.\",\n" +
-                "        \"Recoverable\": false,\n" +
+                "        \"Source\": \"" + SOURCE + "\",\n" +
+                "        \"ReasonCode\": \"" + reasonCode + "\",\n" +
+                "        \"Description\": \"" + description + "\",\n" +
+                "        \"Recoverable\":" + recoverable + ",\n" +
                 "        \"Details\": null\n" +
                 "      }\n" +
                 "    ]\n" +
