@@ -8,6 +8,8 @@ import org.openapitools.client.model.AccountEnrollRequest;
 import org.openapitools.client.model.AccountSearchRequest;
 import org.openapitools.client.model.AccountUpdateRequest;
 
+import static com.mastercard.developer.example.UserExample.COMPANY_ID;
+
 /**
  * This is a Account example class, can be used to modify data to be passed to Account API.
  */
@@ -31,7 +33,7 @@ public class AccountExample {
     public static AccountEnrollRequest getAccountEnrollRequest() {
         // New account enrollment request
         AccountEnrollRequest accountEnrollRequest = new AccountEnrollRequest();
-        return accountEnrollRequest.companyId("611532")
+        return accountEnrollRequest.companyId(COMPANY_ID)
                 .userId("C02333333325")
                 .accountId("5533154982085292")
                 .accountIdType(AccountType.ACCOUNT_NUMBER.name())
@@ -55,7 +57,7 @@ public class AccountExample {
     public static AccountSearchRequest getAccountSearchRequest() {
         // Account search request by 'accountId'
         AccountSearchRequest accountSearchRequest = new AccountSearchRequest();
-        return accountSearchRequest.companyId("611532")
+        return accountSearchRequest.companyId(COMPANY_ID)
                 .accountId("5574840102802448")
                 .accountIdType(AccountType.ACCOUNT_NUMBER.name());
     }
@@ -72,7 +74,7 @@ public class AccountExample {
     public static AccountUpdateRequest getAccountUpdateRequest() {
         // Account update request
         AccountUpdateRequest accountUpdateRequest = new AccountUpdateRequest();
-        return accountUpdateRequest.companyId("611532")
+        return accountUpdateRequest.companyId(COMPANY_ID)
                 .status(AccountStatus.GOOD_STANDING.name());
     }
 }

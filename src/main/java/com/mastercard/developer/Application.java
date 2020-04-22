@@ -34,7 +34,7 @@ public class Application implements CommandLineRunner {
             userExecutor.execute();
             accountExecutor.execute();
         } catch (Exception ex) {
-            log.error("<-- APPLICATION ENDED WITH SOME ERROR -->", ex);
+            log.error("<-- APPLICATION ENDED WITH SOME ERROR --> {}", ex.getMessage());
         }
     }
 }

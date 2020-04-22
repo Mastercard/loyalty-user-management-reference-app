@@ -17,6 +17,8 @@ import org.openapitools.client.model.UserUpdateRequest;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserExample {
 
+    static final String COMPANY_ID = "611532";
+
     /**
      * Create an instance of UserEnrollRequest and set all required and (available) optional information of User.
      * required:
@@ -41,7 +43,7 @@ public class UserExample {
                 .stateProvinceCode("JS")
                 .countryCode("ENG");
 
-        return userEnrollRequest.companyId("611532")
+        return userEnrollRequest.companyId(COMPANY_ID)
                 .userId("C02333333325")
                 .firstName("John")
                 .lastName("Smith")
@@ -104,7 +106,7 @@ public class UserExample {
     public static UserSearchRequest getUserSearchRequest() {
         // User search request
         UserSearchRequest userSearchRequest = new UserSearchRequest();
-        return userSearchRequest.companyId("611532")
+        return userSearchRequest.companyId(COMPANY_ID)
                 .userId("C02333333325");
     }
 
@@ -130,7 +132,7 @@ public class UserExample {
                 .stateProvinceCode("JT")
                 .countryCode("ENG");
 
-        return userUpdateRequest.companyId("611532")
+        return userUpdateRequest.companyId(COMPANY_ID)
                 .nationalIdentifier("255-55-6664")
                 .mobilePhoneNumber("+44(0)9823342343")
                 .homePhoneNumber("+4490244243234")
