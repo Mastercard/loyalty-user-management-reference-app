@@ -203,15 +203,15 @@ To develop a client application that consumes a RESTful Loyalty User Management 
 
 | API | Endpoint | HTTP Method | Description |
 | :-- | :------- | :---------- | :---------- |
-| [User Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users` | POST | User's demographic details enrollment into Mastercard Rewards platform. |
-| [User with Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users` | POST | User's demographic with Account details enrollment into Mastercard Rewards platform. |
-| [User Find By Id](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/{reference_id}` | GET | Retrieves a User’s details by Mastercard generated unique Id. |
-| [User Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/searches` | POST | Retrieves a User’s details based on search criteria. |
-| [User Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/{reference_id}` | PUT | Updates existing User’s demographic details. |
-| [Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts` | POST | User’s account details enrollment into Mastercard Rewards platform. |
-| [Account Find By Id](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/{reference_id}` | GET | Retrieves a User’s account details by Mastercard generated unique Id. |
-| [Account Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/searches` | POST | Retrieves a User’s account details based on search criteria. |
-| [Account Status Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/{reference_id}` | PUT | Updates existing User’s account status. |   
+| [User Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users` | POST | User's demographic details enrollment into Mastercard Rewards platform. |
+| [User with Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users` | POST | User's demographic with Account details enrollment into Mastercard Rewards platform. |
+| [User Find By Id](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users/{reference_id}` | GET | Retrieves a User’s details by Mastercard generated unique Id. |
+| [User Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users/searches` | POST | Retrieves a User’s details based on search criteria. |
+| [User Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users/{reference_id}` | PUT | Updates existing User’s demographic details. |
+| [Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts` | POST | User’s account details enrollment into Mastercard Rewards platform. |
+| [Account Find By Id](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts/{reference_id}` | GET | Retrieves a User’s account details by Mastercard generated unique Id. |
+| [Account Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts/searches` | POST | Retrieves a User’s account details based on search criteria. |
+| [Account Status Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts/{reference_id}` | PUT | Updates existing User’s account status. |   
 
 ### Authorization <a name="authorization"></a>
 The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can use when configuring your API client. These classes will take care of adding the correct `Authorization` header before sending the request.
