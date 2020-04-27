@@ -18,7 +18,6 @@ import org.openapitools.client.model.PagedUserSearchResponse;
 import org.openapitools.client.model.UserEnrollResponse;
 import org.openapitools.client.model.UserSearchResponse;
 import org.openapitools.client.model.UserUpdateResponse;
-import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -65,7 +64,7 @@ class UserServiceImplTest {
 
     @Test
     void testEnrollUserOnly() throws Exception {
-        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(HttpStatus.CREATED.value(), new HashMap<>(), getEnrollResponse(false)));
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(201, new HashMap<>(), getEnrollResponse(false)));
 
         UserEnrollResponse enrollResponse = userService.enrollUserOnly(UserExample.getUserEnrollRequest());
 
@@ -80,7 +79,7 @@ class UserServiceImplTest {
 
     @Test
     void testEnrollUserAndAccount() throws Exception {
-        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(HttpStatus.CREATED.value(), new HashMap<>(), getEnrollResponse(true)));
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(201, new HashMap<>(), getEnrollResponse(true)));
 
         UserEnrollResponse enrollResponse = userService.enrollUserAndAccount(UserExample.getUserAndAccountEnrollRequest());
 
@@ -99,7 +98,7 @@ class UserServiceImplTest {
     void testFindById() throws Exception {
         UserSearchResponse expected = getSearchResponse();
         when(apiClient.escapeString(anyString())).thenReturn(USER_ID);
-        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(HttpStatus.OK.value(), new HashMap<>(), expected));
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(200, new HashMap<>(), expected));
 
         UserSearchResponse actual = userService.findById(USER_ID);
 
@@ -130,7 +129,7 @@ class UserServiceImplTest {
 
     @Test
     void testSearch() throws Exception {
-        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(HttpStatus.OK.value(), new HashMap<>(), getPagedSearchResponse()));
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(200, new HashMap<>(), getPagedSearchResponse()));
 
         PagedUserSearchResponse pagedSearchResponse = userService.search(UserExample.getUserSearchRequest(), 10, 0);
 
@@ -166,7 +165,7 @@ class UserServiceImplTest {
     @Test
     void testUpdate() throws Exception {
         when(apiClient.escapeString(anyString())).thenReturn(USER_ID);
-        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(HttpStatus.OK.value(), new HashMap<>(), getUpdateResponse()));
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(200, new HashMap<>(), getUpdateResponse()));
 
         UserUpdateResponse updateResponse = userService.update(USER_ID, UserExample.getUserUpdateRequest());
 

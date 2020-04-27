@@ -17,7 +17,6 @@ import org.openapitools.client.model.AccountResponse;
 import org.openapitools.client.model.AccountSearchResponse;
 import org.openapitools.client.model.Error;
 import org.openapitools.client.model.PagedAccountSearchResponse;
-import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -62,7 +61,7 @@ class AccountServiceImplTest {
 
     @Test
     void testEnroll() throws Exception {
-        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(HttpStatus.CREATED.value(), new HashMap<>(), getEnrollOrUpdateResponse()));
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(201, new HashMap<>(), getEnrollOrUpdateResponse()));
 
         AccountResponse accountResponse = accountService.enroll(AccountExample.getAccountEnrollRequest());
 
@@ -79,7 +78,7 @@ class AccountServiceImplTest {
     void testFindById() throws Exception {
         AccountSearchResponse expected = getSearchResponse();
         when(apiClient.escapeString(anyString())).thenReturn(ACCOUNT_ID);
-        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(HttpStatus.OK.value(), new HashMap<>(), expected));
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(200, new HashMap<>(), expected));
 
         AccountSearchResponse actual = accountService.findById(ACCOUNT_ID);
 
@@ -103,7 +102,7 @@ class AccountServiceImplTest {
 
     @Test
     void testSearch() throws Exception {
-        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(HttpStatus.OK.value(), new HashMap<>(), getPagedSearchResponse()));
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(200, new HashMap<>(), getPagedSearchResponse()));
 
         PagedAccountSearchResponse pagedSearchResponse = accountService.search(AccountExample.getAccountSearchRequest(), 10, 0);
 
@@ -132,7 +131,7 @@ class AccountServiceImplTest {
     @Test
     void testUpdate() throws Exception {
         when(apiClient.escapeString(anyString())).thenReturn(ACCOUNT_ID);
-        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(HttpStatus.OK.value(), new HashMap<>(), getEnrollOrUpdateResponse()));
+        when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(200, new HashMap<>(), getEnrollOrUpdateResponse()));
 
         AccountResponse accountResponse = accountService.update(ACCOUNT_ID, AccountExample.getAccountUpdateRequest());
 
