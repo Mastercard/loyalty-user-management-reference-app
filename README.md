@@ -86,7 +86,7 @@ See also:
                 <generateApiTests>false</generateApiTests>
                 <generateModelTests>false</generateModelTests>
                 <configOptions>
-                    <sourceFolder>src/gen/java/main</sourceFolder>
+                    <sourceFolder>src/gen/main/java</sourceFolder>
                     <dateLibrary>java8</dateLibrary>
                 </configOptions>
             </configuration>
