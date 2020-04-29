@@ -1,6 +1,6 @@
 # UserEnrollResponse
 
-## Properties
+## Properties <a name="properties"></a>
 
 | Name | Type | Max Length | Description | Notes |
 | :--- | :--- | :--------- | :---------- | :---- |
@@ -9,15 +9,14 @@
 
 ## Sample JSON
 
-### User
+### User <a name="user"></a>
 ```json
 {
   "referenceId": "2a53135b-c1f2-4cec-88a9-b0941304d9d7"
 }
 ```
 
-<br/><br/>
-### User with Account
+### User with Account <a name="user-account"></a>
 ```json
 {
   "referenceId": "2a53135b-c1f2-4cec-88a9-b0941304d9d7",

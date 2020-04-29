@@ -1,6 +1,6 @@
 # UserEnrollRequest
 
-## Properties
+## Properties <a name="properties"></a>
 
 | Name | Type | Max Length | Description | Notes |
 | :--- | :--- | :--------- | :---------- | :---- |
@@ -25,7 +25,7 @@
 
 ## Sample JSON
 
-### User
+### User <a name="user"></a>
 ```json
 {
   "companyId": "611532",
@@ -57,8 +57,7 @@
 }
 ```
 
-<br/><br/>
-### User with Account
+### User with Account <a name="user-account"></a>
 ```json
 {
   "companyId": "611532",

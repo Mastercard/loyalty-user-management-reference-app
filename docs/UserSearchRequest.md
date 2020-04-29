@@ -1,6 +1,6 @@
 # UserSearchRequest
 
-## Properties
+## Properties <a name="properties"></a>
 
 | Name | Type | Max Length | Description | Notes |
 | :--- | :--- | :--------- | :---------- | :---- |
