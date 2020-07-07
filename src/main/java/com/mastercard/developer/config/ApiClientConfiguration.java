@@ -1,60 +1,49 @@
 package com.mastercard.developer.config;
 
-import com.mastercard.developer.exception.ServiceException;
+import com.mastercard.developer.crypto.JweConfig;
+import com.mastercard.developer.crypto.JweConfigBuilder;
+import com.mastercard.developer.crypto.interceptors.OkHttpJweInterceptor;
 import com.mastercard.developer.interceptors.OkHttpOAuth1Interceptor;
 import com.mastercard.developer.utils.AuthenticationUtils;
+import com.mastercard.developer.utils.EncryptionUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.openapitools.client.ApiClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 
-import javax.annotation.PostConstruct;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 
 /**
  * This is ApiClient configuration, it will read properties from application.properties and create instance of ApiClient.
  */
 @Slf4j
 @Configuration
+@EnableConfigurationProperties(MastercardProperties.class)
 public class ApiClientConfiguration {
 
-    @Value("${mastercard.api.base.path}")
-    private String basePath;
-
-    @Value("${mastercard.api.consumer.key}")
-    private String consumerKey;
-
-    @Value("${mastercard.api.keystore.alias}")
-    private String keystoreAlias;
-
-    @Value("${mastercard.api.keystore.password}")
-    private String keystorePassword;
-
-    @Value("${mastercard.api.key.file}")
-    private Resource keyFile;
-
-    @PostConstruct
-    public void initialize() throws ServiceException {
-        if (null == keyFile || StringUtils.isEmpty(consumerKey)) {
-            throw new ServiceException(".p12 file or consumerKey does not exist, please add details in application.properties");
-        }
-    }
-
     @Bean
-    public ApiClient apiClient() {
+    public ApiClient apiClient(@Autowired MastercardProperties mcProperties) {
         ApiClient client = new ApiClient();
         try {
-            PrivateKey signingKey = AuthenticationUtils.loadSigningKey(keyFile.getFile().getAbsolutePath(), keystoreAlias, keystorePassword);
-            client.setBasePath(basePath);
+            Certificate certificate = EncryptionUtils.loadEncryptionCertificate(mcProperties.getEncryptionCertificateFile().getFile().getAbsolutePath());
+            PrivateKey decryptionKey = EncryptionUtils.loadDecryptionKey(mcProperties.getDecryptionKeyFile().getFile().getAbsolutePath(), mcProperties.getDecryptionKeyAlias(), mcProperties.getDecryptionKeystorePassword());
+            JweConfig jweConfig = JweConfigBuilder.builder()
+                    .withEncryptionCertificate(certificate)
+                    .withEncryptionKeyFingerprint(mcProperties.getEncryptionKeyFingerprint())
+                    .withDecryptionKey(decryptionKey)
+                    .build();
+
+            PrivateKey signingKey = AuthenticationUtils.loadSigningKey(mcProperties.getKeyFile().getFile().getAbsolutePath(), mcProperties.getKeystoreAlias(), mcProperties.getKeystorePassword());
+            client.setBasePath(mcProperties.getBasePath());
             client.setDebugging(true);
             client.setReadTimeout(40000);
 
-            return client.setHttpClient(client.getHttpClient()
-                    .newBuilder()
-                    .addInterceptor(new OkHttpOAuth1Interceptor(consumerKey, signingKey))
+            return client.setHttpClient(client.getHttpClient().newBuilder()
+                    .addInterceptor(new OkHttpJweInterceptor(jweConfig))
+                    .addInterceptor(new OkHttpOAuth1Interceptor(mcProperties.getConsumerKey(), signingKey))
                     .build()
             );
         } catch (Exception e) {

@@ -4,9 +4,9 @@
 
 | Name | Type | Max Length | Description | Notes |
 | :--- | :--- | :--------- | :---------- | :---- |
-| **accountId** | **String** | 19 | The User's bank account which can be a credit card account or debit card account ||
-| **status** | **String** | | The status of the account ||
-| **productCode** | **String** | 20 | The unique identifier for a Product within a company ||
-| **programIdentifier** | **String** | 18 | The unique identifier for a Program within a company ||
-| **openDate** | **String** | 10 | The date when account opened by the Company in the format YYYY-MM-DD | [optional] |
-| **enrollmentDate** | **String** | 10 | The date assigned by the Company to an account to avail rewards in the format YYYY-MM-DD | [optional] |
+| **accountNumber** | **String** | 19 | The unique account identifier defined and provided by the client. ||
+| **status** | **String** | 20 | Status for the user's account | [optional] |
+| **productCode** | **String** | 20 | The account's associated reward product identifier as defined by the client and configured during the implementation of the program. ||
+| **programEnrollmentCode** | **String** | 18 | The unique identifier for a client's reward program, defined by the client and configured during implementation. ||
+| **openDate** | **String** | 10 | The date of account opening as defined by the client in the format yyyy-MM-dd | [optional] |
+| **enrollmentDate** | **String** | 10 | The date for when the account becomes eligible for rewards program in the format yyyy-MM-dd | [optional] |

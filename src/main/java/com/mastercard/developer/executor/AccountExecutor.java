@@ -36,11 +36,11 @@ public class AccountExecutor {
 
         AccountResponse accountEnrollResponse = enrollAccount();
 
-        searchAccountById(accountEnrollResponse.getReferenceId());
+        searchAccountById(accountEnrollResponse.getId());
 
         searchAccount();
 
-        updateAccountStatus(accountEnrollResponse.getReferenceId());
+        updateAccountStatus(accountEnrollResponse.getId());
 
         errorHandling();
 
@@ -92,8 +92,10 @@ public class AccountExecutor {
      * Enrollment can fail for various reasons, this scenario is added so that you should know what to expect where there is a failure.
      */
     private void errorHandling() {
+        log.info("<-- CALLING ERROR HANDLING SCENARIO -->");
         AccountEnrollRequest enrollRequest = AccountExample.getAccountEnrollRequest();
-        enrollRequest.setAccountId(null);
+        // Intentionally setting this value to show exception handling scenario.
+        enrollRequest.setAccountNumber(null);
 
         try {
             accountService.enroll(enrollRequest);

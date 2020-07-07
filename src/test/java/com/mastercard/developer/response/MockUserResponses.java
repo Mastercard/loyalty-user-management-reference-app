@@ -1,13 +1,13 @@
 package com.mastercard.developer.response;
 
 import com.google.common.collect.Lists;
-import com.mastercard.developer.constants.Gender;
 import org.openapitools.client.model.PagedUserSearchResponse;
 import org.openapitools.client.model.UserAddress;
 import org.openapitools.client.model.UserEnrollResponse;
 import org.openapitools.client.model.UserSearchResponse;
 import org.openapitools.client.model.UserUpdateResponse;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static com.mastercard.developer.response.MockAccountResponses.getEnrollOrUpdateResponse;
@@ -23,7 +23,7 @@ public class MockUserResponses {
 
     public static UserEnrollResponse getEnrollResponse(boolean addAccount) {
         UserEnrollResponse enrollResponse = new UserEnrollResponse();
-        enrollResponse.setReferenceId(USER_ID);
+        enrollResponse.id(USER_ID);
         if (addAccount) {
             enrollResponse.setAccount(getEnrollOrUpdateResponse());
         }
@@ -32,7 +32,7 @@ public class MockUserResponses {
 
     public static UserUpdateResponse getUpdateResponse() {
         UserUpdateResponse updateResponse = new UserUpdateResponse();
-        return updateResponse.referenceId(USER_ID);
+        return updateResponse.id(USER_ID);
     }
 
     public static UserSearchResponse getSearchResponse() {
@@ -50,12 +50,12 @@ public class MockUserResponses {
                 .countryCode("ENG");
 
         return searchResponse.companyId("611532")
-                .userId("C02333333325")
+                .userNumber("C02333333325")
                 .firstName("John")
                 .lastName("Smith")
                 .motherMaidenName("Maria")
-                .gender(Gender.MALE.code())
-                .birthDate("1975-03-11")
+                .gender("1")
+                .birthDate(LocalDate.parse("1975-03-11"))
                 .nationalIdentifier("324-56-7574")
                 .businessPhoneNumber("+44(0)1234567890")
                 .mobilePhoneNumber("+44(0)1234567891")
@@ -63,10 +63,8 @@ public class MockUserResponses {
                 .emailAddress("john.smith@mastercard.com")
                 .vip(Boolean.TRUE)
                 .employee(Boolean.FALSE)
-                .genericIdentification("Duster")
-                .genericIdentificationDescription("Pet's name")
                 .address(userAddress)
-                .referenceId(USER_ID);
+                .id(USER_ID);
     }
 
     public static PagedUserSearchResponse getPagedSearchResponse() {

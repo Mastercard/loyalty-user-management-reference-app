@@ -70,7 +70,7 @@ class AccountServiceImplTest {
 
         assertAll(
                 () -> assertNotNull(accountResponse),
-                () -> assertEquals(ACCOUNT_ID, accountResponse.getReferenceId())
+                () -> assertEquals(ACCOUNT_ID, accountResponse.getId())
         );
     }
 
@@ -88,15 +88,14 @@ class AccountServiceImplTest {
         assertAll(
                 () -> assertNotNull(actual),
                 () -> assertEquals(expected.getCompanyId(), actual.getCompanyId()),
-                () -> assertEquals(expected.getUserId(), actual.getUserId()),
-                () -> assertEquals(expected.getAccountId(), actual.getAccountId()),
-                () -> assertEquals(expected.getAccountIdType(), actual.getAccountIdType()),
+                () -> assertEquals(expected.getUserNumber(), actual.getUserNumber()),
+                () -> assertEquals(expected.getAccountNumber(), actual.getAccountNumber()),
                 () -> assertEquals(expected.getStatus(), actual.getStatus()),
                 () -> assertEquals(expected.getProductCode(), actual.getProductCode()),
-                () -> assertEquals(expected.getProgramIdentifier(), actual.getProgramIdentifier()),
+                () -> assertEquals(expected.getProgramEnrollmentCode(), actual.getProgramEnrollmentCode()),
                 () -> assertEquals(expected.getOpenDate(), actual.getOpenDate()),
                 () -> assertEquals(expected.getEnrollmentDate(), actual.getEnrollmentDate()),
-                () -> assertEquals(expected.getReferenceId(), actual.getReferenceId())
+                () -> assertEquals(expected.getId(), actual.getId())
         );
     }
 
@@ -116,15 +115,14 @@ class AccountServiceImplTest {
         );
         pagedSearchResponse.getItems().forEach(searchResponse -> assertAll(() -> assertNotNull(searchResponse),
                 () -> assertNotNull(searchResponse.getCompanyId()),
-                () -> assertNotNull(searchResponse.getUserId()),
-                () -> assertNotNull(searchResponse.getAccountId()),
-                () -> assertNotNull(searchResponse.getAccountIdType()),
+                () -> assertNotNull(searchResponse.getUserNumber()),
+                () -> assertNotNull(searchResponse.getAccountNumber()),
                 () -> assertNotNull(searchResponse.getStatus()),
                 () -> assertNotNull(searchResponse.getProductCode()),
-                () -> assertNotNull(searchResponse.getProgramIdentifier()),
+                () -> assertNotNull(searchResponse.getProgramEnrollmentCode()),
                 () -> assertNotNull(searchResponse.getOpenDate()),
                 () -> assertNotNull(searchResponse.getEnrollmentDate()),
-                () -> assertEquals(ACCOUNT_ID, searchResponse.getReferenceId())
+                () -> assertEquals(ACCOUNT_ID, searchResponse.getId())
         ));
     }
 
@@ -140,7 +138,7 @@ class AccountServiceImplTest {
 
         assertAll(
                 () -> assertNotNull(accountResponse),
-                () -> assertEquals(ACCOUNT_ID, accountResponse.getReferenceId())
+                () -> assertEquals(ACCOUNT_ID, accountResponse.getId())
         );
     }
 

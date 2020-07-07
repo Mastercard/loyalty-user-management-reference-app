@@ -4,14 +4,15 @@
 
 | Name | Type | Max Length | Description | Notes |
 | :--- | :--- | :--------- | :---------- | :---- |
-| **companyId** | **String** | 11 | Mastercard or client defined unique identifier for a company ||
-| **userId** | **String** | 30 | The unique identifier assigned by the company to the User ||
+| **companyId** | **String** | 11 | Mastercard assigned unique identifier for a client. | [optional] |
+| **memberICA** | **Long** | | Interbank Card Association number assigned by Mastercard to the client. | [optional] |
+| **userNumber** | **String** | 30 | The unique identifier of a user assigned by the client. ||
 
 ## Sample JSON
 
 ```json
 {
   "companyId": "611532",
-  "userId": "C02333333325"
+  "userNumber": "C02333333325"
 }
 ```

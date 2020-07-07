@@ -1,4 +1,4 @@
-# Mastercard Loyalty Rewards User Management Reference Implementation
+# Reference Implementation for Mastercard Loyalty User Management
 
 [![](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Mastercard/loyalty-user-management-reference/blob/master/LICENSE)
 
@@ -14,6 +14,12 @@
 - [Use Cases](#use-cases)
 - [API Reference](#api-reference)
   * [Authorization](#authorization)
+  * [Encryption and Decryption](#encryption-and-decryption)
+    - [Loading Encryption Certificate](#loading-encryption-certificate)
+    - [Loading Decryption Key](#loading-decryption-key)
+    - [Configuring JWE Instance](#configuring-jwe-instance)  
+    - [Encrypting Entire Payloads](#encrypting-entire-payloads)
+    - [Decrypting Entire Payloads](#decrypting-entire-payloads)
   * [Request Examples](#request-examples)
   * [Recommendation](#recommendation)
 - [Support](#support)
@@ -21,8 +27,7 @@
 
 ## Overview <a name="overview"></a>
 This is a reference application that demonstrates how Loyalty User Management API can be used for the supported operations. Please see here for details on the API: [Mastercard Developers](https://developer.mastercard.com/loyalty-user-managemennt/documentation/). 
-This application illustrates connecting to the Loyalty User Management API with / without encryption.
-Both the approaches require consumer key and .p12 file as received from [Mastercard Developers](https://developer.mastercard.com/dashboard).
+This application illustrates connecting to the Loyalty User Management API with encryption. To call these APIs, consumer key, .p12 files and encryption certs are required from your [Mastercard Developers](https://developer.mastercard.com/dashboard) project.
 
 ### Compatibility <a name="compatibility"></a>
 * [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) or later
@@ -43,20 +48,32 @@ Both the approaches require consumer key and .p12 file as received from [Masterc
 * Create an account at [Mastercard Developers](https://developer.mastercard.com/account/sign-up).  
 * Create a new project and add `Loyalty User Management` API to your project.   
 * Configure project and download signing key. It will download the zip file.  
-* Select `.p12` file from zip and copy it to `src/main/resources` in the project folder.
+* Select `.p12` files from zip and copy it to `src/main/resources` in the project folder.
 * Open `${project.basedir}/src/main/resources/application.properties` and configure below parameters.
     
-    >**mastercard.api.base.path=https://sandbox.api.mastercard.com/loyalty/rewards/enrollment**, its a static field, will be used as a host to make API calls.
+    >**mastercard.api.base-path=https://sandbox.api.mastercard.com/loyalty/rewards/enrollment**, its a static field, will be used as a host to make API calls.
     
     **Below properties will be required for authentication of API calls.**
     
-    >**mastercard.api.key.file=**, this refers to .p12 file found in the signing key. Please place .p12 file at src\main\resources in the project folder and add classpath for .p12 file.
+    >**mastercard.api.key-file=**, this refers to .p12 file found in the signing key. Please place .p12 file at src\main\resources in the project folder and add classpath for .p12 file.
     
-    >**mastercard.api.consumer.key=**, this refers to your consumer key. Copy it from "Keys" section on your project page in [Mastercard Developers](https://developer.mastercard.com/dashboard)
+    >**mastercard.api.consumer-key=**, this refers to your consumer key. Copy it from "Keys" section on your project page in [Mastercard Developers](https://developer.mastercard.com/dashboard)
       
-    >**mastercard.api.keystore.alias=keyalias**, this is the default value of key alias. If it is modified, use the updated one from keys section in [Mastercard Developers](https://developer.mastercard.com/dashboard).
+    >**mastercard.api.keystore-alias=keyalias**, this is the default value of key alias. If it is modified, use the updated one from keys section in [Mastercard Developers](https://developer.mastercard.com/dashboard).
     
-    >**mastercard.api.keystore.password=keystorepassword**, this is the default value of key alias. If it is modified, use the updated one from keys section in [Mastercard Developers](https://developer.mastercard.com/dashboard).
+    >**mastercard.api.keystore-password=keystorepassword**, this is the default value of key alias. If it is modified, use the updated one from keys section in [Mastercard Developers](https://developer.mastercard.com/dashboard).
+
+    **Below properties will be required to encrypt and decrypt the request and response payloads**
+    
+    >**mastercard.api.encryption-certificate-file=**, this is the path to certificate (.crt or .pem) file. Add classpath for file, after placing it at src\main\resources in the project folder. Download Encryption Key from "Client Encryption" section on your project page in [Mastercard Developers](https://developer.mastercard.com/dashboard)
+    
+    >**mastercard.api.encryption-key-fingerprint=**, (optional) this is the encryption key fingerprint, required to encrypt a request. Copy it from "Client Encryption" section on your project page in [Mastercard Developers](https://developer.mastercard.com/dashboard)
+    
+    >**mastercard.api.decryption-key-file=**, this is your private key (.p12) file, required to decrypt a request. Add classpath for this file, after placing it at src\main\resources in the project folder.
+    
+    >**mastercard.api.decryption-key-alias=**, this is required to load your decryption private key.
+
+    >**mastercard.api.decryption-keystore-password=**, this is required to load your decryption private key. 
 
 ### Integrating with OpenAPI Generator <a name="integrating-with-openapi-generator"></a>
 [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) generates API client libraries from [OpenAPI Specs](https://github.com/OAI/OpenAPI-Specification). 
@@ -86,7 +103,7 @@ See also:
                 <generateApiTests>false</generateApiTests>
                 <generateModelTests>false</generateModelTests>
                 <configOptions>
-                    <sourceFolder>src/gen/main/java</sourceFolder>
+                    <sourceFolder>src/gen/java/main</sourceFolder>
                     <dateLibrary>java8</dateLibrary>
                 </configOptions>
             </configuration>
@@ -149,7 +166,7 @@ When the project builds successfully you can then run the following command to s
     
     | URL | Method | Request | Response |
     | :-- | :----- | :------ | :------- |
-    | `/users/{reference_id}` | GET | - | [UserSearchResponse](docs/UserSearchResponse.md) |
+    | `/users/{id}` | GET | - | [UserSearchResponse](docs/UserSearchResponse.md) |
     
 > Case 5: [USER UPDATE](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/user-enrollment/)
   - Updates User’s demographic details into Mastercard Rewards platform.
@@ -157,7 +174,7 @@ When the project builds successfully you can then run the following command to s
 
     | URL | Method | Request | Response |
     | :-- | :----- | :------ | :------- |
-    | `/users/{reference_id}` | PUT | [UserUpdateRequest](docs/UserUpdateRequest.md) | [UserUpdateResponse](docs/UserUpdateResponse.md) |
+    | `/users/{id}` | PUT | [UserUpdateRequest](docs/UserUpdateRequest.md) | [UserUpdateResponse](docs/UserUpdateResponse.md) |
 
 ### Account          
 > Case 1: [ACCOUNT ENROLLMENT](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/account-enrollment/)
@@ -182,7 +199,7 @@ When the project builds successfully you can then run the following command to s
         
     | URL | Method | Request | Response |
     | :-- | :----- | :------ | :------- |
-    | `/accounts/{reference_id}` | GET | - | [AccountSearchResponse](docs/AccountSearchResponse.md) |
+    | `/accounts/{id}` | GET | - | [AccountSearchResponse](docs/AccountSearchResponse.md) |
 
 > Case 4: [ACCOUNT STATUS UPDATE](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/account-enrollment/)
   - Updates User's account status into Mastercard Rewards Platform
@@ -190,7 +207,7 @@ When the project builds successfully you can then run the following command to s
         
     | URL | Method | Request | Response |
     | :-- | :----- | :------ | :------- |
-    | `/accounts/{reference_id}` | PUT | [AccountUpdateRequest](docs/AccountUpdateRequest.md) | [AccountResponse](docs/AccountResponse.md) |
+    | `/accounts/{id}` | PUT | [AccountUpdateRequest](docs/AccountUpdateRequest.md) | [AccountResponse](docs/AccountResponse.md) |
 
 > Case 5: [ERROR HANDLING](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/error-responses/)
   - The operation can fail for various reasons like formatting, field length exceeds, etc.
@@ -201,20 +218,88 @@ When the project builds successfully you can then run the following command to s
 ## API Reference <a name="api-reference"></a>
 To develop a client application that consumes a RESTful Loyalty User Management API with Spring Boot, refer below documentation.
 
-| API | Endpoint | HTTP Method | Description |
-| :-- | :------- | :---------- | :---------- |
-| [User Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users` | POST | User's demographic details enrollment into Mastercard Rewards platform. |
-| [User with Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users` | POST | User's demographic with Account details enrollment into Mastercard Rewards platform. |
-| [User Find By Id](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/{reference_id}` | GET | Retrieves a User’s details by Mastercard generated unique Id. |
-| [User Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/searches` | POST | Retrieves a User’s details based on search criteria. |
-| [User Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/users/{reference_id}` | PUT | Updates existing User’s demographic details. |
-| [Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts` | POST | User’s account details enrollment into Mastercard Rewards platform. |
-| [Account Find By Id](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/{reference_id}` | GET | Retrieves a User’s account details by Mastercard generated unique Id. |
-| [Account Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/searches` | POST | Retrieves a User’s account details based on search criteria. |
-| [Account Status Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/#apis) | `/accounts/{reference_id}` | PUT | Updates existing User’s account status. |   
+| API | Endpoint | HTTP Method | Encrypted Request | Encrypted Response | Description |
+| :-- | :------- | :---------- | :---------------- | :----------------- | :---------- |
+| [User Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users` | POST | YES | NO | User's demographic details enrollment into Mastercard Rewards platform. |
+| [User With Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users` | POST | YES | NO | User's demographic with Account details enrollment into Mastercard Rewards platform. |
+| [User Search By ID](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users/{id}` | GET | NO | YES | Retrieves a User’s details by Mastercard generated unique Id. |
+| [User Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users/searches` | POST | YES | YES | Retrieves a User’s details based on search criteria. |
+| [User Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users/{id}` | PUT | YES | NO | Updates existing User’s demographic details. |
+| [Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts` | POST | YES | NO | User’s account details enrollment into Mastercard Rewards platform. |
+| [Account Search By ID](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts/{id}` | GET | NO | YES | Retrieves a User’s account details by Mastercard generated unique Id. |
+| [Account Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts/searches` | POST | YES | YES | Retrieves a User’s account details based on search criteria. |
+| [Account Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts/{id}` | PUT | YES | NO | Updates existing User’s account status. |   
 
 ### Authorization <a name="authorization"></a>
 The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can use when configuring your API client. These classes will take care of adding the correct `Authorization` header before sending the request.
+
+### Encryption and Decryption <a name="encryption-and-decryption"></a>
+The `com.mastercard.developer.crypto.interceptors` provides a class that you can use when configuring your API client. This class will take care of encrypting payload before sending the request and decrypting payload after receiving the response.
+
+#### Loading Encryption Certificate <a name="loading-encryption-certificate"></a>
+
+A `Certificate` object can be created from a file by calling `EncryptionUtils.loadEncryptionCertificate`:
+```java
+Certificate encryptionCertificate = EncryptionUtils.loadEncryptionCertificate("<insert certificate file path>");
+```
+
+Supported certificate formats: PEM, DER.
+
+#### Loading Decryption Key <a name="loading-decryption-key"></a>
+
+##### From a PKCS#12 Key Store
+
+A `PrivateKey` object can be created from a PKCS#12 key store by calling `EncryptionUtils.loadDecryptionKey` the following way:
+```java
+PrivateKey decryptionKey = EncryptionUtils.loadDecryptionKey(
+                                    "<insert PKCS#12 key file path>", 
+                                    "<insert key alias>", 
+                                    "<insert key password>");
+```
+
+#### Configuring JWE Instance <a name="configuring-jwe-instance"></a>
+Use the `JweConfigBuilder` to create `JweConfig` instances. Example:
+```java
+JweConfig jweConfig = JweConfigBuilder.builder()
+    .withEncryptionCertificate(encryptionCertificate)
+    .withEncryptionKeyFingerprint(encryptionKeyFingerprint)
+    .withDecryptionKey(decryptionKey)
+    .build();
+```
+
+#### Encrypting Entire Payloads <a name="encrypting-entire-payloads"></a>
+
+Example using the configuration [above](#configuring-jwe-instance):
+```java
+String payload = "{" +
+    "    \"sensitiveField1\": \"sensitiveValue1\"," +
+    "    \"sensitiveField2\": \"sensitiveValue2\"" +
+    "}";
+```
+
+Output:
+```json
+{
+    "encryptedPayload": "eyJhbGciOiJSU0EtT0(...)IsImVuYyI6IkEyNTifQ.OKOawDo13gRp2ojaHV7LFpZcg(...)VZKTyKOMTYUmKoTCVJRgckCL9kiMT03JGe.48V1_ALb6US04U3b.5eym8TW_c8SuK0ltJ3rpYI(...)7TALvtu6UG9oMo4vpzs9tX_EFShS8iB7j6ji.XFBoMYUZodetZdvTiFvSkQ"
+}
+```
+
+#### Decrypting Entire Payloads <a name="decrypting-entire-payloads"></a>
+
+Example using the configuration [above](#configuring-jwe-instance):
+```java
+String encryptedPayload = "{" +
+    "  \"encryptedPayload\": \"eyJhbGciOiJSU0EtT0F(...)BiYzQyTIyNTQ1ODgzNSJ9.VkO7N6gAptqoD7IQaK(...)ptYySP_TuvERby89DY1EezAm3A.qj6ISyzq1ASDJKD0.ENF7bUfBkoWAEYvk(...)o9JGMctx-PSdeVqwCQAVRNj0pYs1WjOp4UDbE4eEZIF6YA.Wc7ARH7R6sikpKzxET3MYA\" +
+    "}";
+```
+
+Output:
+```json
+{
+    "sensitiveField1": "sensitiveValue1",
+    "sensitiveField2": "sensitiveValue2"
+}
+```
 
 ### Request Examples <a name="request-examples"></a>
 You can change the default input passed to APIs, modify values in following files,

@@ -1,12 +1,11 @@
 package com.mastercard.developer.response;
 
 import com.google.common.collect.Lists;
-import com.mastercard.developer.constants.AccountStatus;
-import com.mastercard.developer.constants.AccountType;
 import org.openapitools.client.model.AccountResponse;
 import org.openapitools.client.model.AccountSearchResponse;
 import org.openapitools.client.model.PagedAccountSearchResponse;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class MockAccountResponses {
@@ -17,21 +16,20 @@ public class MockAccountResponses {
 
     public static AccountResponse getEnrollOrUpdateResponse() {
         AccountResponse accountResponse = new AccountResponse();
-        return accountResponse.referenceId(ACCOUNT_ID);
+        return accountResponse.id(ACCOUNT_ID);
     }
 
     public static AccountSearchResponse getSearchResponse() {
         AccountSearchResponse searchResponse = new AccountSearchResponse();
         return searchResponse.companyId("611532")
-                .userId("C02333333325")
-                .accountId("5533154982085292")
-                .accountIdType(AccountType.ACCOUNT_NUMBER.name())
-                .status(AccountStatus.NEW.name())
+                .userNumber("C02333333325")
+                .accountNumber("5533154982085292")
+                .status("NEW")
                 .productCode("7274VCC")
-                .programIdentifier("ZXSzM")
-                .enrollmentDate("2020-03-11")
-                .openDate("2017-04-21")
-                .referenceId(ACCOUNT_ID);
+                .programEnrollmentCode("ZXSzM")
+                .enrollmentDate(LocalDate.parse("2020-03-11"))
+                .openDate(LocalDate.parse("2017-04-21"))
+                .id(ACCOUNT_ID);
     }
 
     public static PagedAccountSearchResponse getPagedSearchResponse() {

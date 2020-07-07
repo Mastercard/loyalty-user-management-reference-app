@@ -2,12 +2,12 @@ package com.mastercard.developer.service.impl;
 
 import com.mastercard.developer.exception.ServiceException;
 import com.mastercard.developer.service.UserService;
+import com.mastercard.developer.util.GsonProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
-import org.openapitools.client.JSON;
-import org.openapitools.client.api.UserApi;
+import org.openapitools.client.api.UserManagementApi;
 import org.openapitools.client.model.Errors;
 import org.openapitools.client.model.PagedUserSearchResponse;
 import org.openapitools.client.model.UserEnrollRequest;
@@ -25,15 +25,12 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserApi userApi;
-
-    private JSON json;
+    private UserManagementApi userApi;
 
     @Autowired
     public UserServiceImpl(ApiClient apiClient) {
         log.info("-->> INITIALIZING USER API");
-        userApi = new UserApi(apiClient);
-        json = new JSON();
+        userApi = new UserManagementApi(apiClient);
     }
 
     /**
@@ -53,7 +50,7 @@ public class UserServiceImpl implements UserService {
             log.info("<-- CALLING USER ENROLLMENT ENDPOINT -->");
             UserEnrollResponse userEnrollResponse = userApi.enrollUser(userEnrollRequest);
             Assertions.assertNotNull(userEnrollResponse, "Missing object 'userEnrollResponse' when calling enrollUser(Async)");
-            Assertions.assertNotNull(userEnrollResponse.getReferenceId(), "Missing Mastercard generated unique User's 'id' when calling enrollUser(Async)");
+            Assertions.assertNotNull(userEnrollResponse.getId(), "Missing Mastercard generated unique User's 'id' when calling enrollUser(Async)");
             log.info("<-- USER ENROLLED SUCCESSFULLY -->");
             return userEnrollResponse;
         } catch (ApiException e) {
@@ -79,9 +76,9 @@ public class UserServiceImpl implements UserService {
             log.info("<-- CALLING USER AND ACCOUNT ENROLLMENT ENDPOINT -->");
             UserEnrollResponse userAndAccountEnrollResponse = userApi.enrollUser(userAndAccountEnrollRequest);
             Assertions.assertNotNull(userAndAccountEnrollResponse, "Missing object 'userAndAccountEnrollResponse' when calling enrollUser(Async) for User and Account enrollment");
-            Assertions.assertNotNull(userAndAccountEnrollResponse.getReferenceId(), "Missing Mastercard generated unique User's 'id' when calling enrollUser(Async) for User and Account enrollment");
+            Assertions.assertNotNull(userAndAccountEnrollResponse.getId(), "Missing Mastercard generated unique User's 'id' when calling enrollUser(Async) for User and Account enrollment");
             Assertions.assertNotNull(userAndAccountEnrollResponse.getAccount(), "Missing object 'accountResponse' when calling enrollUser(Async) for User and Account enrollment");
-            Assertions.assertNotNull(userAndAccountEnrollResponse.getAccount().getReferenceId(), "Missing Mastercard generated unique Account's 'id' when calling enrollUser(Async) for User and Account enrollment");
+            Assertions.assertNotNull(userAndAccountEnrollResponse.getAccount().getId(), "Missing Mastercard generated unique Account's 'id' when calling enrollUser(Async) for User and Account enrollment");
             log.info("<-- USER AND ACCOUNT ENROLLED SUCCESSFULLY -->");
             return userAndAccountEnrollResponse;
         } catch (ApiException e) {
@@ -92,22 +89,22 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Retrieves a user’s details by Mastercard generated unique identifier.
-     * URL: /users/{reference_id}
+     * URL: /users/{id}
      * Method: GET
      * Success Response: 200(OK)
      * Error Response: 4XX or 5XX
      *
-     * @param referenceId Mastercard generated unique identifier (required)
+     * @param id Mastercard generated unique identifier (required)
      * @return An instance of UserSearchResponse
      * @throws ServiceException If error occurred while calling find user endpoint
      */
     @Override
-    public UserSearchResponse findById(String referenceId) throws ServiceException {
+    public UserSearchResponse findById(String id) throws ServiceException {
         try {
             log.info("<-- CALLING FIND USER ENDPOINT BY MASTERCARD GENERATED UNIQUE ID -->");
-            UserSearchResponse userFindResponse = userApi.findUser(referenceId);
+            UserSearchResponse userFindResponse = userApi.findUser(id);
             Assertions.assertNotNull(userFindResponse, "Missing object 'userFindResponse' when calling findUser(Async)");
-            Assertions.assertNotNull(userFindResponse.getReferenceId(), "Missing Mastercard generated unique User's 'id' when calling findUser(Async)");
+            Assertions.assertNotNull(userFindResponse.getId(), "Missing Mastercard generated unique User's 'id' when calling findUser(Async)");
             log.info("<-- USER FOUND SUCCESSFULLY -->");
             return userFindResponse;
         } catch (ApiException e) {
@@ -147,23 +144,23 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Updates existing user's details.
-     * URL: /users/{reference_id}
+     * URL: /users/{id}
      * Method: PUT
      * Success Response: 200(OK)
      * Error Response: 4XX or 5XX
      *
-     * @param referenceId       Mastercard generated unique identifier (required)
+     * @param id                Mastercard generated unique identifier (required)
      * @param userUpdateRequest User update request (required)
      * @return An instance of UserUpdateResponse
      * @throws ServiceException If error occurred while calling user update endpoint
      */
     @Override
-    public UserUpdateResponse update(String referenceId, UserUpdateRequest userUpdateRequest) throws ServiceException {
+    public UserUpdateResponse update(String id, UserUpdateRequest userUpdateRequest) throws ServiceException {
         try {
             log.info("<-- CALLING USER UPDATE ENDPOINT -->");
-            UserUpdateResponse userUpdateResponse = userApi.updateUser(referenceId, userUpdateRequest);
+            UserUpdateResponse userUpdateResponse = userApi.updateUser(id, userUpdateRequest);
             Assertions.assertNotNull(userUpdateResponse, "Missing object 'userUpdateResponse' when calling updateUser(Async)");
-            Assertions.assertNotNull(userUpdateResponse.getReferenceId(), "Missing Mastercard generated unique User's 'id' when calling enrollUser(Async)");
+            Assertions.assertNotNull(userUpdateResponse.getId(), "Missing Mastercard generated unique User's 'id' when calling enrollUser(Async)");
             log.info("<-- USER UPDATED SUCCESSFULLY -->");
             return userUpdateResponse;
         } catch (ApiException e) {
@@ -173,6 +170,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private Errors deserializeErrors(String body) {
-        return json.deserialize(body, Errors.class);
+        return GsonProvider.gson().deserialize(body, Errors.class);
     }
 }

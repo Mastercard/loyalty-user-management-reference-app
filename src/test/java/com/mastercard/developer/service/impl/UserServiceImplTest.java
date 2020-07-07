@@ -73,7 +73,7 @@ class UserServiceImplTest {
 
         assertAll(
                 () -> assertNotNull(enrollResponse),
-                () -> assertEquals(USER_ID, enrollResponse.getReferenceId())
+                () -> assertEquals(USER_ID, enrollResponse.getId())
         );
     }
 
@@ -88,9 +88,9 @@ class UserServiceImplTest {
 
         assertAll(
                 () -> assertNotNull(enrollResponse),
-                () -> assertEquals(USER_ID, enrollResponse.getReferenceId()),
+                () -> assertEquals(USER_ID, enrollResponse.getId()),
                 () -> assertNotNull(enrollResponse.getAccount()),
-                () -> assertEquals(ACCOUNT_ID, enrollResponse.getAccount().getReferenceId())
+                () -> assertEquals(ACCOUNT_ID, enrollResponse.getAccount().getId())
         );
     }
 
@@ -107,7 +107,7 @@ class UserServiceImplTest {
 
         assertAll(
                 () -> assertNotNull(actual),
-                () -> assertEquals(expected.getUserId(), actual.getUserId()),
+                () -> assertEquals(expected.getUserNumber(), actual.getUserNumber()),
                 () -> assertEquals(expected.getFirstName(), actual.getFirstName()),
                 () -> assertEquals(expected.getLastName(), actual.getLastName()),
                 () -> assertEquals(expected.getMotherMaidenName(), actual.getMotherMaidenName()),
@@ -120,10 +120,8 @@ class UserServiceImplTest {
                 () -> assertEquals(expected.getMobilePhoneNumber(), actual.getMobilePhoneNumber()),
                 () -> assertEquals(expected.getVip(), actual.getVip()),
                 () -> assertEquals(expected.getEmployee(), actual.getEmployee()),
-                () -> assertEquals(expected.getGenericIdentification(), actual.getGenericIdentification()),
-                () -> assertEquals(expected.getGenericIdentificationDescription(), actual.getGenericIdentificationDescription()),
                 () -> assertEquals(expected.getAddress(), actual.getAddress()),
-                () -> assertEquals(expected.getReferenceId(), actual.getReferenceId())
+                () -> assertEquals(expected.getId(), actual.getId())
         );
     }
 
@@ -142,7 +140,7 @@ class UserServiceImplTest {
                 () -> assertEquals(1, pagedSearchResponse.getItems().size())
         );
         pagedSearchResponse.getItems().forEach(searchResponse -> assertAll(() -> assertNotNull(searchResponse),
-                () -> assertNotNull(searchResponse.getUserId()),
+                () -> assertNotNull(searchResponse.getUserNumber()),
                 () -> assertNotNull(searchResponse.getFirstName()),
                 () -> assertNotNull(searchResponse.getLastName()),
                 () -> assertNotNull(searchResponse.getMotherMaidenName()),
@@ -155,10 +153,8 @@ class UserServiceImplTest {
                 () -> assertNotNull(searchResponse.getMobilePhoneNumber()),
                 () -> assertNotNull(searchResponse.getVip()),
                 () -> assertNotNull(searchResponse.getEmployee()),
-                () -> assertNotNull(searchResponse.getGenericIdentification()),
-                () -> assertNotNull(searchResponse.getGenericIdentificationDescription()),
                 () -> assertNotNull(searchResponse.getAddress()),
-                () -> assertEquals(USER_ID, searchResponse.getReferenceId())
+                () -> assertEquals(USER_ID, searchResponse.getId())
         ));
     }
 
@@ -174,7 +170,7 @@ class UserServiceImplTest {
 
         assertAll(
                 () -> assertNotNull(updateResponse),
-                () -> assertEquals(USER_ID, updateResponse.getReferenceId())
+                () -> assertEquals(USER_ID, updateResponse.getId())
         );
     }
 

@@ -32,15 +32,15 @@ public class UserExecutor {
 
         UserEnrollResponse userEnrollResponse = enrollUser();
 
-        searchUserById(userEnrollResponse.getReferenceId());
+        searchUserById(userEnrollResponse.getId());
 
         searchUser();
 
-        updateUser(userEnrollResponse.getReferenceId());
+        updateUser(userEnrollResponse.getId());
 
         UserEnrollResponse userAndAccountEnrollResponse = enrollUserAndAccount();
 
-        searchUserById(userAndAccountEnrollResponse.getReferenceId());
+        searchUserById(userAndAccountEnrollResponse.getId());
 
         log.info("<<<---- USER API EXECUTION COMPLETED ---->>>");
     }

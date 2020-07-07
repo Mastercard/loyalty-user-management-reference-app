@@ -4,24 +4,23 @@
 
 | Name | Type | Max Length | Description | Notes |
 | :--- | :--- | :--------- | :---------- | :---- |
-| **companyId** | **String** | 11 | Mastercard or client defined unique identifier for a company ||
-| **userId** | **String** | 30 | The unique identifier assigned by the company to the User ||
-| **firstName** | **String** | 50 | First name of User | [optional] |
-| **lastName** | **String** | 50 | Last name of User | [optional] |
-| **motherMaidenName** | **String** | 30 | Mother maiden name of User | [optional] |
+| **companyId** | **String** | 11 | Mastercard assigned unique identifier for a client. | [optional] |
+| **memberICA** | **Long** | | Interbank Card Association number assigned by Mastercard to the client. | [optional] |
+| **userNumber** | **String** | 30 | The unique identifier of a user assigned by the client. ||
+| **firstName** | **String** | 50 | User's first name | [optional] |
+| **lastName** | **String** | 50 | User's last name | [optional] |
+| **motherMaidenName** | **String** | 30 | User's mother maiden name | [optional] |
 | **gender** | **String** | 1 | The ISO code used to determine the gender of the User | [optional] |
-| **birthDate** | **String** | 10 | Date of birth of user in the format YYYY-MM-DD | [optional] |
-| **nationalIdentifier** | **String** | 50 | National Identifier of the User | [optional] |
-| **businessPhoneNumber** | **String** | 25 | Business phone number of the User | [optional] |
-| **mobilePhoneNumber** | **String** | 25 | Mobile phone number of the User | [optional] |
-| **homePhoneNumber** | **String** | 25 | Home phone number of the User | [optional] |
-| **emailAddress** | **String** | 120 | Email address of the User | [optional] |
-| **vip** | **Boolean** | | Allows the user to holds VIP status, default value is false | [optional] |
-| **employee** | **Boolean** | | Allows the user to holds EMPLOYEE status, default value is false | [optional] |
-| **genericIdentification** | **String** | 15 | Answer to the user’s verification question | [optional] |
-| **genericIdentificationDescription** | **String** | 25 | The user’s custom verification question | [optional] |
-| **address** | [**UserAddress**](UserAddress.md) | | Address details of the User | [optional] |
-| **account** | [**Account**](Account.md) | | Account details of the User | [optional] |
+| **birthDate** | **String** | 10 | User's date of birth in the format yyyy-MM-dd | [optional] |
+| **nationalIdentifier** | **String** | 50 | User's unique identifier assigned by the national or government system. For example, passport number or tax identification number | [optional] |
+| **businessPhoneNumber** | **String** | 25 | User's business phone number | [optional] |
+| **mobilePhoneNumber** | **String** | 25 | User's mobile phone number | [optional] |
+| **homePhoneNumber** | **String** | 25 | User's home phone number | [optional] |
+| **emailAddress** | **String** | 120 | User's email address | [optional] |
+| **vip** | **Boolean** | | Used to assign VIP status to a user, default value is false | [optional] |
+| **employee** | **Boolean** | | Used to assign Employee status to a user, default value is false | [optional] |
+| **address** | [**UserAddress**](UserAddress.md) | | User's address details | [optional] |
+| **account** | [**Account**](Account.md) | | User's account details | [optional] |
 
 ## Sample JSON
 
@@ -29,7 +28,7 @@
 ```json
 {
   "companyId": "611532",
-  "userId": "C02333333325",
+  "userNumber": "C02333333325",
   "firstName": "John",
   "lastName": "Smith",
   "motherMaidenName": "Jennifer",
@@ -42,8 +41,6 @@
   "emailAddress": "john.smith@mastercard.com",
   "vip": true,
   "employee": false,
-  "genericIdentification": "Duster",
-  "genericIdentificationDescription": "Pet's name",
   "address": {
     "addressLine1": "10 Upper Bank Street",
     "addressLine2": "Chesterfield",
@@ -61,7 +58,7 @@
 ```json
 {
   "companyId": "611532",
-  "userId": "C02333333325",
+  "userNumber": "C02333333325",
   "firstName": "John",
   "lastName": "Smith",
   "motherMaidenName": "Jennifer",
@@ -74,8 +71,6 @@
   "emailAddress": "john.smith@mastercard.com",
   "vip": true,
   "employee": false,
-  "genericIdentification": "Duster",
-  "genericIdentificationDescription": "Pet's name",
   "address": {
     "addressLine1": "10 Upper Bank Street",
     "addressLine2": "Chesterfield",
@@ -87,10 +82,10 @@
     "stateProvinceCode": "JS"
   },
   "account": {
-    "accountId": "5330333671236516",
+    "accountNumber": "5330333671236516",
     "status": "NEW",
     "productCode": "7274VCC",
-    "programIdentifier": "ZXSzM",
+    "programEnrollmentCode": "ZXSzM",
     "openDate": "2015-01-01",
     "enrollmentDate": "2018-03-11"
   }

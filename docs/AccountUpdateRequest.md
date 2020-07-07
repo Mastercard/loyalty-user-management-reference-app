@@ -4,8 +4,9 @@
 
 | Name | Type | Max Length | Description | Notes |
 | :--- | :--- | :--------- | :---------- | :---- |
-| **companyId** | **String** | 11 | Mastercard or client defined unique identifier for a company ||
-| **status** | **String** | | The updated status of the account ||
+| **companyId** | **String** | 11 | Mastercard assigned unique identifier for a client. | [optional] |
+| **memberICA** | **Long** | | Interbank Card Association number assigned by Mastercard to the client. | [optional] |
+| **status** | **String** | 20 | Status for the user's account ||
 
 ## Sample JSON
 
