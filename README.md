@@ -1,4 +1,4 @@
-# Mastercard Loyalty User Management Reference Implementation
+# Mastercard Loyalty Rewards User Management Reference Implementation
 
 [![](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Mastercard/loyalty-user-management-reference/blob/master/LICENSE)
 
