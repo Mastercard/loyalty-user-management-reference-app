@@ -310,7 +310,7 @@ You can change the default input passed to APIs, modify values in following file
 It is recommended to create an instance of `ApiClient` per thread in a multithreaded environment to avoid any potential issues.
 
 ## Support <a name="support"></a>
-If you would like further information, please send an email to LoyaltyPromotions.Support@mastercard.com
+If you would like further information, please send an email to apisupport@mastercard.com
 
 ## License <a name="license"></a>
 Copyright 2020 Mastercard
