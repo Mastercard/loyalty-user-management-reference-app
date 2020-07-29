@@ -26,7 +26,7 @@
 - [License](#license)
 
 ## Overview <a name="overview"></a>
-This is a reference application that demonstrates how Loyalty User Management API can be used for the supported operations. Please see here for details on the API: [Mastercard Developers](https://developer.mastercard.com/loyalty-user-managemennt/documentation/). 
+This is a reference application to demonstrate how Loyalty User Management API can be used for the supported operations. Please see here for details on the API: [Mastercard Developers](https://developer.mastercard.com/loyalty-user-managemennt/documentation/).
 This application illustrates connecting to the Loyalty User Management API with encryption. To call these APIs, consumer key, .p12 files and encryption certs are required from your [Mastercard Developers](https://developer.mastercard.com/dashboard) project.
 
 ### Compatibility <a name="compatibility"></a>
