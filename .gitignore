@@ -1,0 +1,15 @@
+**/target
+/**/.DS_Store
+
+### IntelliJ IDEA ###
+/**/.idea
+/**/*.iml
+/**/*.ipr
+/**/*.ips
+/**/*.iws
+
+### VS Code ###
+/**/.vscode
+
+### Keys ###
+*.p12

@@ -1,4 +1,4 @@
-# PagedAccountSearchResponse
+# PagedResponseOfAccountSearchResponse
 
 ## Properties <a name="properties"></a>
 

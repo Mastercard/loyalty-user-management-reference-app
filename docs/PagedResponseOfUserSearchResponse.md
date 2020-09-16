@@ -1,4 +1,4 @@
-# PagedUserSearchResponse
+# PagedResponseOfUserSearchResponse
 
 ## Properties <a name="properties"></a>
 

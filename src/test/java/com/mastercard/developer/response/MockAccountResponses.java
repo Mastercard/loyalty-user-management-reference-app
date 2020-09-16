@@ -3,7 +3,7 @@ package com.mastercard.developer.response;
 import com.google.common.collect.Lists;
 import org.openapitools.client.model.AccountResponse;
 import org.openapitools.client.model.AccountSearchResponse;
-import org.openapitools.client.model.PagedAccountSearchResponse;
+import org.openapitools.client.model.PagedResponseOfAccountSearchResponse;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -12,7 +12,7 @@ public class MockAccountResponses {
 
     public static final String ACCOUNT_ID = UUID.randomUUID().toString();
     public static final String DUP_REQ_DESCRIPTION = "The Account already exists for the given User and Product.";
-    public static final String SER_ERR_DESCRIPTION = "Account unique Reference ID could not be found.";
+    public static final String SER_ERR_DESCRIPTION = "Account ID could not be found.";
 
     public static AccountResponse getEnrollOrUpdateResponse() {
         AccountResponse accountResponse = new AccountResponse();
@@ -32,8 +32,8 @@ public class MockAccountResponses {
                 .id(ACCOUNT_ID);
     }
 
-    public static PagedAccountSearchResponse getPagedSearchResponse() {
-        PagedAccountSearchResponse pagedSearchResponse = new PagedAccountSearchResponse();
+    public static PagedResponseOfAccountSearchResponse getPagedSearchResponse() {
+        PagedResponseOfAccountSearchResponse pagedSearchResponse = new PagedResponseOfAccountSearchResponse();
         return pagedSearchResponse.count(1)
                 .limit(10)
                 .offset(0)

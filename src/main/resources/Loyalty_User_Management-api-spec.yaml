@@ -1,23 +1,24 @@
 openapi: 3.0.3
 info:
-  description: Loyalty User Management service allows clients to enroll users and their associated accounts into a reward program so that they can avail different promotions or reward benefits provided to their users. Subsequent to enrollment, clients can use this service to retrieve and update user or account information.
-  version: 1.0.0
   title: Loyalty User Management
-  termsOfService: https://developer.mastercard.com/terms-of-use
+  description: 'Loyalty User Management service allows clients to enroll users and their associated accounts into a reward program so that they can avail different promotions or reward benefits provided to their users. Subsequent to enrollment, clients can use this service to retrieve and update user or account information.'
+  termsOfService: 'https://developer.mastercard.com/terms-of-use'
   contact:
     name: Mastercard Developer Zone
-    url: https://developer.mastercard.com
+    url: 'https://developer.mastercard.com'
     email: apisupport@mastercard.com
   license:
     name: Mastercard Developer Zone Support
-    url: https://developer.mastercard.com/support
+    url: 'https://developer.mastercard.com/support'
+  version: 1.1.0
+servers:
+  - url: 'https://api.mastercard.com/loyalty/rewards'
+    description: Loyalty User Management
 tags:
   - name: User Management
     description: Multiple endpoints are available to perform different User management activities such as <ul><li>New user with account enrollment</li><li>New user enrollment without account</li><li>Update user demographic details</li><li>Fetch user details based on user identifier assigned by Mastercard on enrollment or via user number</li></ul>
   - name: Account Management
     description: Multiple endpoints are available to perform different account management activities such as <ul><li>New account enrollment for an existing user</li><li>Update account status for an existing account</li><li>Fetch user details based on account identifer assigned by Mastercard on enrollment or via account number</li></ul>
-servers:
-  - url: https://api.mastercard.com/loyalty/rewards/enrollment
 paths:
   /users:
     post:
@@ -25,1056 +26,1289 @@ paths:
         - User Management
       summary: Enroll users and their associated accounts into a reward program
       operationId: enrollUser
+      x-mastercard-api-encrypted: true
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserEnrollRequest"
-        description: userEnrollRequest
-        required: true
+              $ref: '#/components/schemas/UserEnrollRequest'
       responses:
-        "201":
+        '201':
           description: Successfully Enrolled User
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserEnrollResponse"
-        "400":
-          description: Bad Request
+                $ref: '#/components/schemas/UserEnrollResponse'
+        '400':
+          description: Invalid Request.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Errors"
+                $ref: '#/components/schemas/Errors'
               examples:
-                error400:
-                  $ref: "#/components/examples/error400"
-      deprecated: false
+                INVALID_REQUEST:
+                  value:
+                    Errors:
+                      Error:
+                        - Source: Loyalty-Enrollment
+                          ReasonCode: INVALID_FIELD_FORMAT_FIRST_NAME
+                          Description: First Name must be alphanumeric.
+                          Recoverable: false
+                          Details: null
+        '401':
+          description: Client could not be authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                AUTHORIZATION_ERROR:
+                  $ref: '#/components/examples/error401'
+        '500':
+          description: Internal System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                INTERNAL_SYSTEM_ERROR:
+                  $ref: '#/components/examples/error500'
   /users/searches:
     post:
       tags:
         - User Management
       summary: This endpoint allows clients to search and retrieve a user's information using a combination of the User Number and Company.
       operationId: searchUser
+      x-mastercard-api-encrypted: true
       parameters:
-        - name: limit
-          in: query
-          description: Number of records per page.
-          required: false
-          example: 25
-          schema:
-            type: integer
-            format: int32
-        - name: offset
-          in: query
-          description: Result page you want to retrieve (0..N)
-          required: false
-          example: 0
-          schema:
-            type: integer
-            format: int32
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserSearchRequest"
-        description: userSearchRequest
-        required: true
+              $ref: '#/components/schemas/UserSearchRequest'
       responses:
-        "200":
+        '200':
           description: Successfully Retrieved User(s)
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Paged_UserSearchResponse_"
-        "400":
-          description: Bad Request
+                $ref: '#/components/schemas/PagedResponseOfUserSearchResponse'
+        '400':
+          description: Invalid Request.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Errors"
+                $ref: '#/components/schemas/Errors'
               examples:
-                error400:
-                  $ref: "#/components/examples/error400"
-      deprecated: false
-  "/users/{id}":
+                INVALID_REQUEST:
+                  value:
+                    Errors:
+                      Error:
+                        - Source: Loyalty-Enrollment
+                          ReasonCode: MISSING_REQUIRED_FIELD_USER_NUMBER
+                          Description: User Number is required.
+                          Recoverable: false
+                          Details: null
+        '401':
+          description: Client could not be authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                AUTHORIZATION_ERROR:
+                  $ref: '#/components/examples/error401'
+        '500':
+          description: Internal System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                INTERNAL_SYSTEM_ERROR:
+                  $ref: '#/components/examples/error500'
+  '/users/{id}':
     get:
       tags:
         - User Management
       summary: This endpoint provides clients with the ability to retrieve a User's information using the User Id.
       operationId: findUser
+      x-mastercard-api-encrypted: true
       parameters:
         - name: id
           in: path
           description: User Id
           required: true
-          example: 2a53135b-c1f2-4cec-88a9-b0941304d9d7
+          style: simple
           schema:
             type: string
+          example: '2a53135b-c1f2-4cec-88a9-b0941304d9d7'
       responses:
-        "200":
+        '200':
           description: Successfully Retrieved User
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserSearchResponse"
-        "404":
-          description: Not Found
+                $ref: '#/components/schemas/UserSearchResponse'
+        '404':
+          description: User Not Found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Errors"
+                $ref: '#/components/schemas/Errors'
               examples:
-                userError404:
-                  $ref: "#/components/examples/userError404"
-      deprecated: false
+                RESOURCE_NOT_FOUND:
+                  value:
+                    Errors:
+                      Error:
+                        - Source: Loyalty-Enrollment
+                          ReasonCode: SERVICE_ERROR
+                          Description: User ID could not be found.
+                          Recoverable: false
+                          Details: null
+        '401':
+          description: Client could not be authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                AUTHORIZATION_ERROR:
+                  $ref: '#/components/examples/error401'
+        '500':
+          description: Internal System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                INTERNAL_SYSTEM_ERROR:
+                  $ref: '#/components/examples/error500'
     put:
       tags:
         - User Management
       summary: This endpoint provides clients with the ability to update existing enrolled user details.<br/> Please note while calling the endpoint make sure that all the attributes are provided in payload with values even if few attributes needs to be updated.
       operationId: updateUser
+      x-mastercard-api-encrypted: true
       parameters:
         - name: id
           in: path
           description: User Id
           required: true
-          example: 2a53135b-c1f2-4cec-88a9-b0941304d9d7
+          style: simple
           schema:
             type: string
+          example: '2a53135b-c1f2-4cec-88a9-b0941304d9d7'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserUpdateRequest"
-        description: userUpdateRequest
-        required: true
+              $ref: '#/components/schemas/UserUpdateRequest'
       responses:
-        "200":
+        '200':
           description: Successfully Updated User
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserUpdateResponse"
-        "400":
-          description: Bad Request
+                $ref: '#/components/schemas/UserUpdateResponse'
+        '400':
+          description: Invalid Request.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Errors"
+                $ref: '#/components/schemas/Errors'
               examples:
-                error400:
-                  $ref: "#/components/examples/error400"
-        "404":
-          description: Not Found
+                INVALID_REQUEST:
+                  value:
+                    Errors:
+                      Error:
+                        - Source: Loyalty-Enrollment
+                          ReasonCode: INVALID_FIELD_VALUE_COMPANY_ID
+                          Description: Company ID does not exists.
+                          Recoverable: false
+                          Details: null
+        '401':
+          description: Client could not be authorized.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Errors"
+                $ref: '#/components/schemas/Errors'
               examples:
-                userError404:
-                  $ref: "#/components/examples/userError404"
-      deprecated: false
+                AUTHORIZATION_ERROR:
+                  $ref: '#/components/examples/error401'
+        '500':
+          description: Internal System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                INTERNAL_SYSTEM_ERROR:
+                  $ref: '#/components/examples/error500'
   /accounts:
     post:
       tags:
         - Account Management
       summary: This endpoint allows clients to enroll new accounts for an existing User into a rewards program.
       operationId: enrollAccount
+      x-mastercard-api-encrypted: true
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AccountEnrollRequest"
-        description: accountEnrollRequest
-        required: true
+              $ref: '#/components/schemas/AccountEnrollRequest'
       responses:
-        "201":
+        '201':
           description: Successfully Enrolled Account
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AccountResponse"
-        "400":
-          description: Bad Request
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Invalid Request.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Errors"
+                $ref: '#/components/schemas/Errors'
               examples:
-                error400:
-                  $ref: "#/components/examples/error400"
-      deprecated: false
+                INVALID_REQUEST:
+                  value:
+                    Errors:
+                      Error:
+                        - Source: Loyalty-Enrollment
+                          ReasonCode: MISSING_REQUIRED_FIELD_ACCOUNT_NUMBER
+                          Description: Account Number is required.
+                          Recoverable: false
+                          Details: null
+        '401':
+          description: Client could not be authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                AUTHORIZATION_ERROR:
+                  $ref: '#/components/examples/error401'
+        '500':
+          description: Internal System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                INTERNAL_SYSTEM_ERROR:
+                  $ref: '#/components/examples/error500'
   /accounts/searches:
     post:
       tags:
         - Account Management
       summary: This endpoint provides clients with the ability to search and retrieve an account's information using the combination of Company and Account Number
       operationId: searchAccount
+      x-mastercard-api-encrypted: true
       parameters:
-        - name: limit
-          in: query
-          description: Number of records per page.
-          required: false
-          example: 25
-          schema:
-            type: integer
-            format: int32
-        - name: offset
-          in: query
-          description: Result page you want to retrieve (0..N)
-          required: false
-          example: 0
-          schema:
-            type: integer
-            format: int32
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AccountSearchRequest"
-        description: accountSearchRequest
-        required: true
+              $ref: '#/components/schemas/AccountSearchRequest'
       responses:
-        "200":
+        '200':
           description: Successfully Retrieved Account(s)
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Paged_AccountSearchResponse_"
-        "400":
-          description: Bad Request
+                $ref: '#/components/schemas/PagedResponseOfAccountSearchResponse'
+        '400':
+          description: Invalid Request.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Errors"
+                $ref: '#/components/schemas/Errors'
               examples:
-                error400:
-                  $ref: "#/components/examples/error400"
-      deprecated: false
-  "/accounts/{id}":
+                INVALID_REQUEST:
+                  value:
+                    Errors:
+                      Error:
+                        - Source: Loyalty-Enrollment
+                          ReasonCode: MISSING_REQUIRED_FIELD_ACCOUNT_NUMBER
+                          Description: Account Number is required.
+                          Recoverable: false
+                          Details: null
+        '401':
+          description: Client could not be authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                AUTHORIZATION_ERROR:
+                  $ref: '#/components/examples/error401'
+        '500':
+          description: Internal System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                INTERNAL_SYSTEM_ERROR:
+                  $ref: '#/components/examples/error500'
+  '/accounts/{id}':
     get:
       tags:
         - Account Management
       summary: This endpoint provides clients with the ability to retrieve account details using the Account Id
       operationId: findAccount
+      x-mastercard-api-encrypted: true
       parameters:
         - name: id
           in: path
           description: Account Id
           required: true
-          example: d8753780-62d1-4775-9549-8ed92c48c290
+          style: simple
           schema:
             type: string
+          example: 'd8753780-62d1-4775-9549-8ed92c48c290'
       responses:
-        "200":
+        '200':
           description: Successfully Retrieved Account
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AccountSearchResponse"
-        "404":
-          description: Not Found
+                $ref: '#/components/schemas/AccountSearchResponse'
+        '404':
+          description: Account Not Found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Errors"
+                $ref: '#/components/schemas/Errors'
               examples:
-                accountError404:
-                  $ref: "#/components/examples/accountError404"
-      deprecated: false
+                RESOURCE_NOT_FOUND:
+                  value:
+                    Errors:
+                      Error:
+                        - Source: Loyalty-Enrollment
+                          ReasonCode: SERVICE_ERROR
+                          Description: Account ID could not be found.
+                          Recoverable: false
+                          Details: null
+        '401':
+          description: Client could not be authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                AUTHORIZATION_ERROR:
+                  $ref: '#/components/examples/error401'
+        '500':
+          description: Internal System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                INTERNAL_SYSTEM_ERROR:
+                  $ref: '#/components/examples/error500'
     put:
       tags:
         - Account Management
       summary: This endpoint provides clients with the ability to update an existing account's status.
       operationId: updateAccount
+      x-mastercard-api-encrypted: true
       parameters:
         - name: id
           in: path
           description: Account Id
           required: true
-          example: d8753780-62d1-4775-9549-8ed92c48c290
+          style: simple
           schema:
             type: string
+          example: 'd8753780-62d1-4775-9549-8ed92c48c290'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AccountUpdateRequest"
-        description: accountUpdateRequest
-        required: true
+              $ref: '#/components/schemas/AccountUpdateRequest'
       responses:
-        "200":
+        '200':
           description: Successfully Updated Account
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AccountResponse"
-        "400":
-          description: Bad Request
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: Invalid Request.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Errors"
+                $ref: '#/components/schemas/Errors'
               examples:
-                error400:
-                  $ref: "#/components/examples/error400"
-        "404":
-          description: Not Found
+                INVALID_REQUEST:
+                  value:
+                    Errors:
+                      Error:
+                        - Source: Loyalty-Enrollment
+                          ReasonCode: MISSING_REQUIRED_FIELD_STATUS
+                          Description: Status is required.
+                          Recoverable: false
+                          Details: null
+        '401':
+          description: Client could not be authorized.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Errors"
+                $ref: '#/components/schemas/Errors'
               examples:
-                accountError404:
-                  $ref: "#/components/examples/accountError404"
-      deprecated: false
+                AUTHORIZATION_ERROR:
+                  $ref: '#/components/examples/error401'
+        '500':
+          description: Internal System Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+              examples:
+                INTERNAL_SYSTEM_ERROR:
+                  $ref: '#/components/examples/error500'
 components:
+  parameters:
+    offset:
+      name: offset
+      in: query
+      description: The number of items to offset the start of the list from (Pagination)
+      required: false
+      style: form
+      allowReserved: true
+      schema:
+        type: integer
+        format: int32
+      example: 0
+    limit:
+      name: limit
+      in: query
+      description: Can be used to limit the amount of results returned from a query (Pagination)
+      required: false
+      style: form
+      allowReserved: true
+      schema:
+        type: integer
+        format: int32
+      example: 25
   schemas:
     Account:
-      type: object
+      title: Account
       required:
         - accountNumber
         - productCode
         - programEnrollmentCode
+      type: object
       properties:
         accountNumber:
-          type: string
-          example: 5330333671236516
-          minLength: 1
           maxLength: 19
+          minLength: 0
+          type: string
           description: The unique account identifier defined and provided by the client.
-        status:
-          type: string
-          example: NEW
-          minLength: 0
-          maxLength: 20
-          default: GOOD_STANDING
-          description: Status for the user's account
-          enum: [NEW, GOOD_STANDING, REDEEM_ONLY, CANCELLED, ON_HOLD, INACTIVE]
-        productCode:
-          type: string
-          example: 7274VCC
-          minLength: 1
-          maxLength: 20
-          description: The account's associated reward product identifier as defined by the client and configured during the implementation of the program.
-        programEnrollmentCode:
-          type: string
-          example: ZXSzM
-          minLength: 1
-          maxLength: 18
-          description: The unique identifier for a client's reward program, defined by the client and configured during implementation.
-        openDate:
-          type: string
-          format: date
-          minLength: 0
-          maxLength: 10
-          example: "2015-01-01"
-          description: The date of account opening as defined by the client.
+          example: '5330333671236516'
         enrollmentDate:
+          maxLength: 10
+          minLength: 0
           type: string
           format: date
-          example: "2018-03-11"
-          minLength: 0
+          description: 'The date for when the account becomes eligible for rewards program. If undefined, enrollment date is default to the date when Mastercard processes the enrollment.'
+          example: '2018-03-11'
+        openDate:
           maxLength: 10
-          description: The date for when the account becomes eligible for rewards program. If undefined, enrollment date is default to the date when Mastercard processes the enrollment.
-      title: Account
+          minLength: 0
+          type: string
+          format: date
+          description: The date of account opening as defined by the client.
+          example: '2017-04-21'
+        productCode:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: The account's associated reward product identifier as defined by the client and configured during the implementation of the program.
+          example: 7274VCC
+        programEnrollmentCode:
+          maxLength: 18
+          minLength: 0
+          type: string
+          description: 'The unique identifier for a client''s reward program, defined by the client and configured during implementation.'
+          example: ZXSzM
+        status:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: Status for the user's account.
+          example: NEW
+          default: GOOD_STANDING
+          enum:
+            - CANCELLED
+            - GOOD_STANDING
+            - INACTIVE
+            - NEW
+            - ON_HOLD
+            - REDEEM_ONLY
     AccountEnrollRequest:
-      type: object
+      title: AccountEnrollRequest
       required:
         - accountNumber
         - productCode
         - programEnrollmentCode
         - userNumber
+      type: object
       properties:
+        accountNumber:
+          maxLength: 19
+          minLength: 0
+          type: string
+          description: The unique account identifier defined and provided by the client.
+          example: '5330333671236516'
+        companyId:
+          maxLength: 11
+          minLength: 0
+          type: string
+          description: Mastercard assigned unique identifier for a client.
+          example: '611532'
+        enrollmentDate:
+          maxLength: 10
+          minLength: 0
+          type: string
+          format: date
+          description: 'The date for when the account becomes eligible for rewards program. If undefined, enrollment date is default to the date when Mastercard processes the enrollment.'
+          example: '2018-03-11'
         memberICA:
           type: integer
-          format: int64
-          example: 611532
           description: Interbank Card Association number assigned by Mastercard to the client.
-        companyId:
-          type: string
-          example: 611532
-          minLength: 0
-          maxLength: 11
-          description: Mastercard assigned unique identifier for a client.
-        userNumber:
-          type: string
-          example: C02333333325
-          minLength: 1
-          maxLength: 30
-          description: The unique identifier of a user assigned by the client.
-        accountNumber:
-          type: string
-          example: 5330333671236516
-          minLength: 1
-          maxLength: 19
-          description: The unique account identifier defined and provided by the client.
-        status:
-          type: string
-          example: NEW
-          minLength: 0
-          maxLength: 20
-          default: GOOD_STANDING
-          description: Status for the user's account
-          enum: [NEW, GOOD_STANDING, REDEEM_ONLY, CANCELLED, ON_HOLD, INACTIVE]
-        productCode:
-          type: string
-          example: 7274VCC
-          minLength: 1
-          maxLength: 20
-          description: The account's associated reward product identifier as defined by the client and configured during the implementation of the program.
-        programEnrollmentCode:
-          type: string
-          example: ZXSzM
-          minLength: 1
-          maxLength: 18
-          description: The unique identifier for a client's reward program, defined by the client and configured during implementation.
+          format: int64
+          example: 898923
         openDate:
+          maxLength: 10
+          minLength: 0
           type: string
           format: date
-          example: "2015-01-01"
-          minLength: 0
-          maxLength: 10
           description: The date of account opening as defined by the client.
-        enrollmentDate:
-          type: string
-          format: date
-          example: "2018-03-11"
+          example: '2017-04-21'
+        productCode:
+          maxLength: 20
           minLength: 0
-          maxLength: 10
-          description: The date for when the account becomes eligible for rewards program. If undefined, enrollment date is default to the date when Mastercard processes the enrollment.
-      title: AccountEnrollRequest
+          type: string
+          description: The account's associated reward product identifier as defined by the client and configured during the implementation of the program.
+          example: 7274VCC
+        programEnrollmentCode:
+          maxLength: 18
+          minLength: 0
+          type: string
+          description: 'The unique identifier for a client''s reward program, defined by the client and configured during implementation.'
+          example: ZXSzM
+        status:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: Status for the user's account.
+          example: NEW
+          default: GOOD_STANDING
+          enum:
+            - CANCELLED
+            - GOOD_STANDING
+            - INACTIVE
+            - NEW
+            - ON_HOLD
+            - REDEEM_ONLY
+        userNumber:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: The unique identifier of a user assigned by the client.
+          example: C02333333325
     AccountResponse:
+      title: AccountResponse
+      required:
+        - id
       type: object
       properties:
         id:
-          type: string
-          example: d8753780-62d1-4775-9549-8ed92c48c290
-          minLength: 20
           maxLength: 50
+          minLength: 20
+          type: string
           description: Unique Account identifier assigned by Mastercard and provided to client in the account enrollment response.
-      title: AccountResponse
+          example: d8753780-62d1-4775-9549-8ed92c48c290
     AccountSearchRequest:
-      type: object
+      title: AccountSearchRequest
       required:
         - accountNumber
+      type: object
       properties:
+        companyId:
+          maxLength: 11
+          minLength: 0
+          type: string
+          description: Mastercard assigned unique identifier for a client.
+          example: '611532'
         memberICA:
           type: integer
+          description: Interbank Card Association number assigned by Mastercard to the client.
           format: int64
           example: 611532
-          description: Interbank Card Association number assigned by Mastercard to the client.
-        companyId:
-          type: string
-          example: 611532
-          minLength: 0
-          maxLength: 11
-          description: Mastercard assigned unique identifier for a client.
         accountNumber:
-          type: string
-          example: 5330333671236516
-          minLength: 16
           maxLength: 19
-          description: The unique account identifier defined and provided by the client.
-        programEnrollmentCode:
-          type: string
-          example: ZXSzM
           minLength: 0
+          type: string
+          description: The unique account identifier defined and provided by the client.
+          example: '5330333671236516'
+        programEnrollmentCode:
           maxLength: 18
-          description: The unique identifier for a client's reward program, defined by the client and configured during implementation.
-      title: AccountSearchRequest
+          minLength: 0
+          type: string
+          description: 'The unique identifier for a client''s reward program, defined by the client and configured during implementation.'
+          example: ZXSzM
     AccountSearchResponse:
+      title: AccountSearchResponse
+      required:
+        - accountNumber
+        - productCode
+        - programEnrollmentCode
       type: object
       properties:
+        accountNumber:
+          maxLength: 19
+          minLength: 0
+          type: string
+          description: The unique account identifier defined and provided by the client.
+          example: '5330333671236516'
+        companyId:
+          maxLength: 11
+          minLength: 0
+          type: string
+          description: Mastercard assigned unique identifier for a client.
+          example: '611532'
+        enrollmentDate:
+          maxLength: 10
+          minLength: 0
+          type: string
+          format: date
+          description: 'The date for when the account becomes eligible for rewards program. If undefined, enrollment date is default to the date when Mastercard processes the enrollment.'
+          example: '2018-03-11'
+        id:
+          maxLength: 50
+          minLength: 20
+          type: string
+          description: Unique Account identifier assigned by Mastercard and provided to client in the account enrollment response.
+          example: d8753780-62d1-4775-9549-8ed92c48c290
         memberICA:
           type: integer
-          format: int64
-          example: 611532
           description: Interbank Card Association number assigned by Mastercard to the client.
-        companyId:
-          type: string
-          example: 611532
-          minLength: 0
-          maxLength: 11
-          description: Mastercard assigned unique identifier for a client.
-        userNumber:
-          type: string
-          example: C02333333325
-          minLength: 1
-          maxLength: 30
-          description: The unique identifier of a user assigned by the client.
-        accountNumber:
-          type: string
-          example: 5330333671236516
-          minLength: 1
-          maxLength: 19
-          description: The unique account identifier defined and provided by the client.
-        status:
-          type: string
-          example: NEW
-          minLength: 3
-          maxLength: 20
-          description: Status for the user's account.
-        productCode:
-          type: string
-          example: 7274VCC
-          minLength: 1
-          maxLength: 20
-          description: The account's associated reward product identifier as defined by the client and configured during the implementation of the program.
-        programEnrollmentCode:
-          type: string
-          example: ZXSzM
-          minLength: 1
-          maxLength: 18
-          description: The unique identifier for a client's reward program, defined by the client and configured during implementation.
+          format: int64
+          example: 898923
         openDate:
-          type: string
-          format: date
-          example: "2015-01-01"
+          maxLength: 10
           minLength: 0
-          maxLength: 10
-          description: The date of account opening as defined by the client.
-        enrollmentDate:
           type: string
           format: date
-          example: "2018-03-11"
-          minLength: 10
-          maxLength: 10
-          description: The date for when the account becomes eligible for rewards program. If undefined, enrollment date is default to the date when Mastercard processes the enrollment.
-        id:
+          description: The date of account opening as defined by the client.
+          example: '2017-04-21'
+        productCode:
+          maxLength: 20
+          minLength: 0
           type: string
-          example: d8753780-62d1-4775-9549-8ed92c48c290
-          minLength: 20
-          maxLength: 50
-          description: Unique Account identifier assigned by Mastercard and provided to client in the account enrollment response.
-      title: AccountSearchResponse
+          description: The account's associated reward product identifier as defined by the client and configured during the implementation of the program.
+          example: 7274VCC
+        programEnrollmentCode:
+          maxLength: 18
+          minLength: 0
+          type: string
+          description: 'The unique identifier for a client''s reward program, defined by the client and configured during implementation.'
+          example: ZXSzM
+        status:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: Status for the user's account.
+          example: NEW
+        userNumber:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: The unique identifier of a user assigned by the client.
+          example: C02333333325
     AccountUpdateRequest:
-      type: object
+      title: AccountUpdateRequest
       required:
         - status
+      type: object
       properties:
+        companyId:
+          maxLength: 11
+          minLength: 0
+          type: string
+          description: Mastercard assigned unique identifier for a client.
+          example: '611532'
         memberICA:
           type: integer
-          format: int64
-          example: 611532
           description: Interbank Card Association number assigned by Mastercard to the client.
-        companyId:
-          type: string
-          example: 611532
-          minLength: 0
-          maxLength: 11
-          description: Mastercard assigned unique identifier for a client.
+          format: int64
+          example: 898923
         status:
-          type: string
-          example: NEW
-          minLength: 3
           maxLength: 20
+          minLength: 0
+          type: string
           description: Status for the user's account
-          enum: [NEW, GOOD_STANDING, REDEEM_ONLY, CANCELLED, ON_HOLD, INACTIVE]
-      title: AccountUpdateRequest
+          example: NEW
+          enum:
+            - CANCELLED
+            - GOOD_STANDING
+            - INACTIVE
+            - NEW
+            - ON_HOLD
+            - REDEEM_ONLY
     Error:
+      title: Error
       type: object
       properties:
         Source:
-          type: string
-          example: Loyalty-Enrollment
-          minLength: 10
           maxLength: 50
-          description: Source of the error
-        ReasonCode:
-          type: string
-          example: A unique error constant
           minLength: 10
-          maxLength: 100
-          description: A unique constant identifying the error case encountered during transaction processing.
-        Description:
           type: string
-          example: Short description of validation or service error message
-          minLength: 1
+          description: Source of the error
+          example: Loyalty-Enrollment
+        ReasonCode:
           maxLength: 100
+          minLength: 10
+          type: string
+          description: A unique constant identifying the error case encountered during transaction processing.
+          example: A unique error constant
+        Description:
+          maxLength: 100
+          minLength: 1
+          type: string
           description: Short description of the ReasonCode field.
+          example: Short description of validation or service error message
         Recoverable:
           type: boolean
+          description: 'Indicates whether this error will always be returned for this request, or retrying could change the outcome.'
           example: false
-          description: Indicates whether this error will always be returned for this request, or retrying could change the outcome.
         Details:
-          type: string
-          example: null
+          maxLength: 100
           minLength: 0
-          maxLength: 0
-          description: Where appropriate, indicates detailed information about data received.
-      title: Error
+          type: string
+          description: 'Where appropriate, indicates detailed information about data received.'
+          example: null
     ErrorList:
-      type: object
+      title: ErrorList
       required:
         - Error
+      type: object
       properties:
         Error:
-          type: array
           minItems: 1
+          type: array
           items:
-            $ref: "#/components/schemas/Error"
-      description: List object containing type of errors
+            $ref: '#/components/schemas/Error'
     Errors:
-      type: object
+      title: Errors
       required:
         - Errors
+      type: object
       properties:
         Errors:
-          $ref: "#/components/schemas/ErrorList"
-      title: Errors
+          $ref: '#/components/schemas/ErrorList'
+    PagedResponseOfAccountSearchResponse:
+      title: PagedResponseOfAccountSearchResponse
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The number of items that are in this offset batch
+          format: int32
+          example: 1
+        offset:
+          type: integer
+          description: The number of items to offset the start of the list from
+          format: int32
+          example: 0
+        limit:
+          type: integer
+          description: The number of items in the list to be limited to
+          format: int32
+          example: 25
+        total:
+          type: integer
+          description: The total number of items that are in the entire collection
+          format: int64
+          example: 1
+        items:
+          minItems: 0
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountSearchResponse'
+    PagedResponseOfUserSearchResponse:
+      title: PagedResponseOfUserSearchResponse
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The number of items that are in this offset batch
+          format: int32
+          example: 1
+        offset:
+          type: integer
+          description: The number of items to offset the start of the list from
+          format: int32
+          example: 0
+        limit:
+          type: integer
+          description: The number of items in the list to be limited to
+          format: int32
+          example: 25
+        total:
+          type: integer
+          description: The total number of items that are in the entire collection
+          format: int64
+          example: 1
+        items:
+          minItems: 0
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSearchResponse'
     UserAddress:
+      title: UserAddress
       type: object
       properties:
         addressLine1:
-          type: string
-          example: 10 Upper Bank Street
-          minLength: 0
           maxLength: 80
+          minLength: 0
+          pattern: '^$|^[ ,.:&_\)\(\[\]\-\n\t\\\/\p{L}\p{M}\p{N}\p{Z}]+$'
+          type: string
           description: Address Line 1 of the User's address
+          example: 10 Upper Bank Street
         addressLine2:
-          type: string
-          example: Chesterfield
-          minLength: 0
           maxLength: 80
+          minLength: 0
+          pattern: '^$|^[ ,.:&_\)\(\[\]\-\n\t\\\/\p{L}\p{M}\p{N}\p{Z}]+$'
+          type: string
           description: Address Line 2 of the User's address
+          example: Chesterfield
         addressLine3:
-          type: string
-          example: Canary Wharf
-          minLength: 0
           maxLength: 80
+          minLength: 0
+          pattern: '^$|^[ ,.:&_\)\(\[\]\-\n\t\\\/\p{L}\p{M}\p{N}\p{Z}]+$'
+          type: string
           description: Address Line 3 of the User's address
+          example: Canary Wharf
         addressLine4:
-          type: string
-          example: Tower Hamlets
-          minLength: 0
           maxLength: 80
+          minLength: 0
+          pattern: '^$|^[ ,.:&_\)\(\[\]\-\n\t\\\/\p{L}\p{M}\p{N}\p{Z}]+$'
+          type: string
           description: Address Line 4 of the User's address
+          example: Tower Hamlets
         city:
-          type: string
-          example: London
-          minLength: 0
           maxLength: 30
+          minLength: 0
+          pattern: '^[\.\p{L}\p{Z}]*$'
+          type: string
           description: City name as per User's address
+          example: London
         countryCode:
-          type: string
-          example: ENG
-          minLength: 2
           maxLength: 3
+          minLength: 2
+          pattern: '^[\p{L}]*$'
+          type: string
           description: Country Code as per User's address
+          example: ENG
         postalCode:
-          type: string
-          example: E1 6AN
-          minLength: 0
           maxLength: 14
-          description: Postal Code as per User's address
+          minLength: 0
+          pattern: '^$|^[ ,.:_\p{L}\p{N}]+$'
+          type: string
+          description: Postal Code as per the User's address
+          example: E1 6AN
         stateProvinceCode:
-          type: string
-          example: JS
-          minLength: 2
           maxLength: 3
-          description: State Code as per User's address
-      title: UserAddress
+          minLength: 2
+          pattern: '^[\p{L}]*$'
+          type: string
+          description: State Code as per the User's address
+          example: JS
     UserEnrollRequest:
-      type: object
-      required:
-        - userNumber
-      properties:
-        memberICA:
-          type: integer
-          format: int64
-          example: 611532
-          description: Interbank Card Association number assigned by Mastercard to the client.
-        companyId:
-          type: string
-          example: 611532
-          minLength: 0
-          maxLength: 11
-          description: Mastercard assigned unique identifier for a client.
-        userNumber:
-          type: string
-          example: C02333333325
-          minLength: 1
-          maxLength: 30
-          description: The unique identifier of a user assigned by the client
-        firstName:
-          type: string
-          example: John
-          minLength: 0
-          maxLength: 50
-          description: User's first name
-        lastName:
-          type: string
-          example: Smith
-          minLength: 0
-          maxLength: 50
-          description: User's last name
-        motherMaidenName:
-          type: string
-          example: Jennifer
-          minLength: 0
-          maxLength: 30
-          description: User's mother maiden name
-        gender:
-          type: string
-          example: 1
-          minLength: 0
-          maxLength: 1
-          description: The ISO code used to determine the gender of the User
-          enum: [0, 1, 2, 9]
-        birthDate:
-          type: string
-          format: date
-          example: "1975-03-11"
-          minLength: 0
-          maxLength: 10
-          description: User's date of birth
-        nationalIdentifier:
-          type: string
-          example: 324-56-7574
-          minLength: 0
-          maxLength: 50
-          description: User's unique identifier assigned by the national or government system. For example, passport number or tax identification number
-        businessPhoneNumber:
-          type: string
-          example: +1(0)1234567890
-          minLength: 0
-          maxLength: 25
-          description: User's business phone number
-        mobilePhoneNumber:
-          type: string
-          example: +1(0)1234567891
-          minLength: 0
-          maxLength: 25
-          description: User's mobile phone number
-        homePhoneNumber:
-          type: string
-          example: +1(0)1234567892
-          minLength: 0
-          maxLength: 25
-          description: User's home phone number
-        emailAddress:
-          type: string
-          example: john.smith@mastercard.com
-          minLength: 0
-          maxLength: 120
-          description: User's email address
-        vip:
-          type: boolean
-          example: true
-          default: false
-          description: Used to assign VIP status to a user
-        employee:
-          type: boolean
-          example: true
-          default: false
-          description: Used to assign Employee status to a user
-        address:
-          $ref: "#/components/schemas/UserAddress"
-        account:
-          $ref: "#/components/schemas/Account"
       title: UserEnrollRequest
-    UserEnrollResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          example: 2a53135b-c1f2-4cec-88a9-b0941304d9d7
-          minLength: 20
-          maxLength: 50
-          description: Unique User identifier assigned by Mastercard and provided to client at the time of user enrollment response.
-        account:
-          $ref: "#/components/schemas/AccountResponse"
-      title: UserEnrollResponse
-    UserSearchRequest:
-      type: object
       required:
         - userNumber
-      properties:
-        memberICA:
-          type: integer
-          format: int64
-          example: 611532
-          description: Interbank Card Association number assigned by Mastercard to the client.
-        companyId:
-          type: string
-          example: 611532
-          minLength: 0
-          maxLength: 11
-          description: Mastercard assigned unique identifier for a client.
-        userNumber:
-          type: string
-          example: C02333333325
-          minLength: 1
-          maxLength: 30
-          description: The unique identifier of a user assigned by the client
-      title: UserSearchRequest
-    UserSearchResponse:
       type: object
       properties:
-        memberICA:
-          type: integer
-          format: int64
-          example: 611532
-          description: Interbank Card Association number assigned by Mastercard to the client.
-        companyId:
-          type: string
-          example: 611532
-          minLength: 0
-          maxLength: 11
-          description: Mastercard assigned unique identifier for a client.
-        userNumber:
-          type: string
-          example: C02333333325
-          minLength: 1
-          maxLength: 30
-          description: The unique identifier of a user assigned by the client
-        firstName:
-          type: string
-          example: John
-          minLength: 0
-          maxLength: 50
-          description: User's first name
-        lastName:
-          type: string
-          example: Smith
-          minLength: 0
-          maxLength: 50
-          description: User's last name
-        motherMaidenName:
-          type: string
-          example: Jennifer
-          minLength: 0
-          maxLength: 30
-          description: User's mother maiden name
-        gender:
-          type: string
-          example: 1
-          minLength: 0
-          maxLength: 1
-          description: Gender of the User
+        account:
+          $ref: '#/components/schemas/Account'
+        address:
+          $ref: '#/components/schemas/UserAddress'
         birthDate:
+          maxLength: 10
+          minLength: 0
           type: string
           format: date
-          example: "1975-03-11"
-          minLength: 0
-          maxLength: 10
           description: User's date of birth
-        nationalIdentifier:
-          type: string
-          example: 324-56-7574
-          minLength: 0
-          maxLength: 50
-          description: User's unique identifier assigned by the national or government system. For example, passport number or tax identification number
+          example: '1975-03-11'
         businessPhoneNumber:
+          maxLength: 25
+          minLength: 0
+          pattern: '^$|^[\ \+\-\(\)\p{N}]*$'
           type: string
+          description: User's business phone number
           example: +1(0)1234567890
+        companyId:
+          maxLength: 11
           minLength: 0
-          maxLength: 25
-          description: User's business phone number
-        mobilePhoneNumber:
           type: string
-          example: +1(0)1234567891
-          minLength: 0
-          maxLength: 25
-          description: User's mobile phone number
-        homePhoneNumber:
-          type: string
-          example: +1(0)1234567892
-          minLength: 0
-          maxLength: 25
-          description: User's home phone number
+          description: Mastercard assigned unique identifier for a client.
+          example: '611532'
         emailAddress:
-          type: string
-          example: john.smith@mastercard.com
-          minLength: 0
           maxLength: 120
+          minLength: 0
+          type: string
           description: User's email address
-        vip:
-          type: boolean
-          example: true
-          default: false
-          description: Used to assign VIP status to a user
+          example: john.smith@mastercard.com
         employee:
           type: boolean
-          example: true
-          default: false
           description: Used to assign Employee status to a user
-        address:
-          $ref: "#/components/schemas/UserAddress"
-        id:
-          type: string
-          example: 2a53135b-c1f2-4cec-88a9-b0941304d9d7
-          minLength: 20
+          example: false
+          default: false
+        firstName:
           maxLength: 50
-          description: Unique User identifier assigned by Mastercard and provided to client in the user enrollment response.
-      title: UserSearchResponse
-    UserUpdateRequest:
-      type: object
-      properties:
+          minLength: 0
+          pattern: '^[\.\-\p{L}\p{M}\p{N}\p{Z}]*$'
+          type: string
+          description: User's first name
+          example: John
+        gender:
+          maxLength: 1
+          minLength: 0
+          type: string
+          description: The ISO code used to determine the gender of the User
+          example: '1'
+          enum:
+            - '0'
+            - '1'
+            - '2'
+            - '9'
+        homePhoneNumber:
+          maxLength: 25
+          minLength: 0
+          pattern: '^$|^[\ \+\-\(\)\p{N}]*$'
+          type: string
+          description: User's home phone number
+          example: +1(0)1234567892
+        lastName:
+          maxLength: 50
+          minLength: 0
+          pattern: '^[\.\-\p{L}\p{M}\p{N}\p{Z}]*$'
+          type: string
+          description: User's last name
+          example: Smith
         memberICA:
           type: integer
-          format: int64
-          example: 611532
           description: Interbank Card Association number assigned by Mastercard to the client.
-        companyId:
-          type: string
-          example: 611532
-          minLength: 0
-          maxLength: 11
-          description: Mastercard assigned unique identifier for a client.
-        firstName:
-          type: string
-          example: John
-          minLength: 0
-          maxLength: 50
-          description: User's first name
-        lastName:
-          type: string
-          example: Smith
-          minLength: 0
-          maxLength: 50
-          description: User's last name
-        motherMaidenName:
-          type: string
-          example: Clark
-          minLength: 0
-          maxLength: 30
-          description: User's mother maiden name
-        gender:
-          type: string
-          example: 1
-          minLength: 0
-          maxLength: 1
-          description: The ISO code used to determine the gender of the User
-          enum: [0, 1, 2, 9]
-        birthDate:
-          type: string
-          format: date
-          example: "1975-03-11"
-          minLength: 0
-          maxLength: 10
-          description: User's date of birth
-        nationalIdentifier:
-          type: string
-          example: ABC
-          minLength: 0
-          maxLength: 50
-          description: User's unique identifier assigned by the national or government system. For example, passport number or tax identification number
-        businessPhoneNumber:
-          type: string
-          example: +1(123)456 789
-          minLength: 0
-          maxLength: 25
-          description: User's business phone number
+          format: int64
+          example: 898923
         mobilePhoneNumber:
-          type: string
-          example: +1(123)456 789
-          minLength: 0
           maxLength: 25
-          description: User's business phone number
-        homePhoneNumber:
-          type: string
-          example: +1(123)456 789
           minLength: 0
-          maxLength: 25
-          description: User's business phone number
-        emailAddress:
+          pattern: '^$|^[\ \+\-\(\)\p{N}]*$'
           type: string
-          example: john.smith@email.com
+          description: User's mobile phone number
+          example: +1(0)1234567891
+        motherMaidenName:
+          maxLength: 30
           minLength: 0
-          maxLength: 120
-          description: User's email address
+          pattern: '^[\.\-\p{L}\p{M}\p{N}\p{Z}]*$'
+          type: string
+          description: User's mother maiden name
+          example: Jennifer
+        nationalIdentifier:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: 'User''s unique identifier assigned by the national or government system. For example, passport number or tax identification number'
+          example: 324-56-7574
+        userNumber:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: The unique identifier of a user assigned by the client
+          example: C02333333325
         vip:
           type: boolean
-          example: true
-          default: false
           description: Used to assign VIP status to a user
-        employee:
-          type: boolean
           example: true
           default: false
-          description: Used to assign Employee status to a user
-        address:
-          $ref: "#/components/schemas/UserAddress"
-      title: UserUpdateRequest
-    UserUpdateResponse:
+    UserEnrollResponse:
+      title: UserEnrollResponse
       type: object
       properties:
         id:
-          type: string
-          example: 2a53135b-c1f2-4cec-88a9-b0941304d9d7
-          minLength: 20
           maxLength: 50
-          description: Unique User identifier assigned by Mastercard and provided to client in the user enrollment response.
+          minLength: 20
+          type: string
+          description: Unique User identifier assigned by Mastercard and provided to client at the time of user enrollment response.
+          example: 2a53135b-c1f2-4cec-88a9-b0941304d9d7
+        account:
+          $ref: '#/components/schemas/AccountResponse'
+    UserSearchRequest:
+      title: UserSearchRequest
+      required:
+        - userNumber
+      type: object
+      properties:
+        companyId:
+          maxLength: 11
+          minLength: 0
+          type: string
+          description: Mastercard assigned unique identifier for a client.
+          example: '611532'
+        memberICA:
+          type: integer
+          description: Interbank Card Association number assigned by Mastercard to the client.
+          format: int64
+          example: 898923
+        userNumber:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: The unique identifier of a user assigned by the client
+          example: C02333333325
+    UserSearchResponse:
+      title: UserSearchResponse
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/UserAddress'
+        birthDate:
+          maxLength: 10
+          minLength: 0
+          type: string
+          format: date
+          description: User's date of birth
+          example: '1975-03-11'
+        businessPhoneNumber:
+          maxLength: 25
+          minLength: 0
+          pattern: '^$|^[\ \+\-\(\)\p{N}]*$'
+          type: string
+          description: User's business phone number
+          example: +1(0)1234567890
+        companyId:
+          maxLength: 11
+          minLength: 0
+          type: string
+          description: Mastercard assigned unique identifier for a client.
+          example: '611532'
+        emailAddress:
+          maxLength: 120
+          minLength: 0
+          type: string
+          description: User's email address
+          example: john.smith@mastercard.com
+        employee:
+          type: boolean
+          description: Used to assign Employee status to a user
+          example: false
+          default: false
+        firstName:
+          maxLength: 50
+          minLength: 0
+          pattern: '^[\.\-\p{L}\p{M}\p{N}\p{Z}]*$'
+          type: string
+          description: User's first name
+          example: John
+        gender:
+          maxLength: 1
+          minLength: 0
+          type: string
+          description: The ISO code used to determine the gender of the User
+          example: '1'
+        homePhoneNumber:
+          maxLength: 25
+          minLength: 0
+          pattern: '^$|^[\ \+\-\(\)\p{N}]*$'
+          type: string
+          description: User's home phone number
+          example: +1(0)1234567892
+        id:
+          maxLength: 50
+          minLength: 20
+          type: string
+          description: Unique User identifier assigned by Mastercard and provided to client at the time of user enrollment response.
+          example: 2a53135b-c1f2-4cec-88a9-b0941304d9d7
+        lastName:
+          maxLength: 50
+          minLength: 0
+          pattern: '^[\.\-\p{L}\p{M}\p{N}\p{Z}]*$'
+          type: string
+          description: User's last name
+          example: Smith
+        memberICA:
+          type: integer
+          description: Interbank Card Association number assigned by Mastercard to the client.
+          format: int64
+          example: 898923
+        mobilePhoneNumber:
+          maxLength: 25
+          minLength: 0
+          pattern: '^$|^[\ \+\-\(\)\p{N}]*$'
+          type: string
+          description: User's mobile phone number
+          example: +1(0)1234567891
+        motherMaidenName:
+          maxLength: 30
+          minLength: 0
+          pattern: '^[\.\-\p{L}\p{M}\p{N}\p{Z}]*$'
+          type: string
+          description: User's mother maiden name
+          example: Jennifer
+        nationalIdentifier:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: 'User''s unique identifier assigned by the national or government system. For example, passport number or tax identification number'
+          example: 324-56-7574
+        userNumber:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: User type identifier assigned by the Issuer to the customer.
+          example: C02333333325
+        vip:
+          type: boolean
+          description: Used to assign VIP status to a user
+          example: true
+          default: false
+    UserUpdateRequest:
+      title: UserUpdateRequest
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/UserAddress'
+        birthDate:
+          maxLength: 10
+          minLength: 0
+          type: string
+          format: date
+          description: User's date of birth
+          example: '1975-03-11'
+        businessPhoneNumber:
+          maxLength: 25
+          minLength: 0
+          pattern: '^$|^[\ \+\-\(\)\p{N}]*$'
+          type: string
+          description: User's business phone number
+          example: +1(0)1234567890
+        companyId:
+          maxLength: 11
+          minLength: 0
+          type: string
+          description: Mastercard assigned unique identifier for a client.
+          example: '611532'
+        emailAddress:
+          maxLength: 120
+          minLength: 0
+          type: string
+          description: User's email address
+          example: john.smith@mastercard.com
+        employee:
+          type: boolean
+          description: Used to assign Employee status to a user
+          example: false
+          default: false
+        firstName:
+          maxLength: 50
+          minLength: 0
+          pattern: '^[\.\-\p{L}\p{M}\p{N}\p{Z}]*$'
+          type: string
+          description: User's first name
+          example: John
+        gender:
+          maxLength: 1
+          minLength: 0
+          type: string
+          description: The ISO code used to determine the gender of the User
+          example: '1'
+          enum:
+            - '0'
+            - '1'
+            - '2'
+            - '9'
+        homePhoneNumber:
+          maxLength: 25
+          minLength: 0
+          pattern: '^$|^[\ \+\-\(\)\p{N}]*$'
+          type: string
+          description: User's home phone number
+          example: +1(0)1234567892
+        lastName:
+          maxLength: 50
+          minLength: 0
+          pattern: '^[\.\-\p{L}\p{M}\p{N}\p{Z}]*$'
+          type: string
+          description: User's last name
+          example: Smith
+        memberICA:
+          type: integer
+          description: Interbank Card Association number assigned by Mastercard to the client.
+          format: int64
+          example: 898923
+        mobilePhoneNumber:
+          maxLength: 25
+          minLength: 0
+          pattern: '^$|^[\ \+\-\(\)\p{N}]*$'
+          type: string
+          description: User's mobile phone number
+          example: +1(0)1234567891
+        motherMaidenName:
+          maxLength: 30
+          minLength: 0
+          pattern: '^[\.\-\p{L}\p{M}\p{N}\p{Z}]*$'
+          type: string
+          description: User's mother maiden name
+          example: Jennifer
+        nationalIdentifier:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: 'User''s unique identifier assigned by the national or government system. For example, passport number or tax identification number'
+          example: 324-56-7574
+        vip:
+          type: boolean
+          description: Used to assign VIP status to a user
+          example: true
+          default: false
+    UserUpdateResponse:
       title: UserUpdateResponse
-    Paged_AccountSearchResponse_:
       type: object
       properties:
-        count:
-          type: integer
-          format: int32
-          example: 1
-          description: The number of items that are in this offset batch
-        limit:
-          type: integer
-          format: int32
-          example: 25
-          description: The number of items in the list to be limited to
-        offset:
-          type: integer
-          format: int32
-          example: 0
-          description: The number of items to offset the start of the list from
-        total:
-          type: integer
-          format: int64
-          example: 1
-          description: The total number of items that are in the entire collection
-        items:
-          type: array
-          minItems: 0
-          items:
-            $ref: "#/components/schemas/AccountSearchResponse"
-      title: Paged_AccountSearchResponse_
-    Paged_UserSearchResponse_:
-      type: object
-      properties:
-        count:
-          type: integer
-          format: int32
-          example: 1
-          description: The number of items that are in this offset batch
-        limit:
-          type: integer
-          format: int32
-          example: 25
-          description: The number of items in the list to be limited to
-        offset:
-          type: integer
-          format: int32
-          example: 0
-          description: The number of items to offset the start of the list from
-        total:
-          type: integer
-          format: int64
-          example: 1
-          description: The total number of items that are in the entire collection
-        items:
-          type: array
-          minItems: 0
-          items:
-            $ref: "#/components/schemas/UserSearchResponse"
-      title: Paged_UserSearchResponse_
+        id:
+          maxLength: 50
+          minLength: 20
+          type: string
+          description: Unique User identifier assigned by Mastercard and provided to client at the time of user enrollment response.
+          example: 2a53135b-c1f2-4cec-88a9-b0941304d9d7
   examples:
-    error400:
+    error401:
       value:
-        Errors: { Error: [ { Source: "Loyalty-Enrollment", ReasonCode: "MISSING_REQUIRED_FIELD", Description: "Either Company Id or Member ICA is required.", Recoverable: false, Details: } ] }
-      summary: "Bad Request"
-    userError404:
+        Errors:
+          Error:
+            - Source: Loyalty-Enrollment
+              ReasonCode: AUTHORIZATION_ERROR
+              Description: Client could not be authorized.
+              Recoverable: true
+              Details: null
+    error500:
       value:
-        Errors: { Error: [ { Source: "Loyalty-Enrollment", ReasonCode: "SERVICE_ERROR", Description: "User unique ID could not be found.", Recoverable: false, Details: } ] }
-      summary: "Not Found"
-    accountError404:
-      value:
-        Errors: { Error: [ { Source: "Loyalty-Enrollment", ReasonCode: "SERVICE_ERROR", Description: "Account unique ID could not be found.", Recoverable: false, Details: } ] }
-      summary: "Not Found"
+        Errors:
+          Error:
+            - Source: Loyalty-Enrollment
+              ReasonCode: INTERNAL_SYSTEM_ERROR
+              Description: Internal System Error.
+              Recoverable: true
+              Details: null

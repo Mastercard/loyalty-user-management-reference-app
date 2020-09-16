@@ -9,7 +9,7 @@ import org.openapitools.client.model.AccountEnrollRequest;
 import org.openapitools.client.model.AccountResponse;
 import org.openapitools.client.model.AccountSearchResponse;
 import org.openapitools.client.model.Error;
-import org.openapitools.client.model.PagedAccountSearchResponse;
+import org.openapitools.client.model.PagedResponseOfAccountSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ import java.util.List;
 @Component
 public class AccountExecutor {
 
-    private AccountService accountService;
+    private final AccountService accountService;
 
     @Autowired
     public AccountExecutor(AccountService accountService) {
@@ -61,10 +61,10 @@ public class AccountExecutor {
      * USE CASE 2: ACCOUNT SEARCH
      * It will retrieves User’s account details based on provided search criteria
      *
-     * @return An instance of PagedAccountSearchResponse
+     * @return An instance of PagedResponseOfAccountSearchResponse
      */
-    private PagedAccountSearchResponse searchAccount() throws ServiceException {
-        return accountService.search(AccountExample.getAccountSearchRequest(), 25, 0);
+    private PagedResponseOfAccountSearchResponse searchAccount() throws ServiceException {
+        return accountService.search(0, 25, AccountExample.getAccountSearchRequest());
     }
 
     /**

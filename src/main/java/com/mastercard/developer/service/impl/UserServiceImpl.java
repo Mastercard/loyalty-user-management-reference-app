@@ -9,7 +9,7 @@ import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.api.UserManagementApi;
 import org.openapitools.client.model.Errors;
-import org.openapitools.client.model.PagedUserSearchResponse;
+import org.openapitools.client.model.PagedResponseOfUserSearchResponse;
 import org.openapitools.client.model.UserEnrollRequest;
 import org.openapitools.client.model.UserEnrollResponse;
 import org.openapitools.client.model.UserSearchRequest;
@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserManagementApi userApi;
+    private final UserManagementApi userApi;
 
     @Autowired
     public UserServiceImpl(ApiClient apiClient) {
@@ -120,17 +120,17 @@ public class UserServiceImpl implements UserService {
      * Success Response: 200(OK)
      * Error Response: 4XX or 5XX
      *
+     * @param offset            The number of items to offset the start of the list from (optional)
+     * @param limit             Can be used to limit the amount of results returned from a query (optional)
      * @param userSearchRequest User search request (required)
-     * @param limit             Number of records per page. (optional)
-     * @param offset            Result page you want to retrieve (0..N) (optional)
-     * @return An instance of PagedUserSearchResponse
+     * @return An instance of PagedResponseOfUserSearchResponse
      * @throws ServiceException If error occurred while calling user search endpoint
      */
     @Override
-    public PagedUserSearchResponse search(UserSearchRequest userSearchRequest, Integer limit, Integer offset) throws ServiceException {
+    public PagedResponseOfUserSearchResponse search(Integer offset, Integer limit, UserSearchRequest userSearchRequest) throws ServiceException {
         try {
             log.info("<-- CALLING USER SEARCH ENDPOINT -->");
-            PagedUserSearchResponse pagedUserSearchResponse = userApi.searchUser(userSearchRequest, limit, offset);
+            PagedResponseOfUserSearchResponse pagedUserSearchResponse = userApi.searchUser(offset, limit, userSearchRequest);
             Assertions.assertNotNull(pagedUserSearchResponse, "Missing object 'pagedUserSearchResponse' when calling searchUser(Async)");
             List<UserSearchResponse> searchList = pagedUserSearchResponse.getItems();
             Assertions.assertNotNull(searchList, "Missing User search response items");

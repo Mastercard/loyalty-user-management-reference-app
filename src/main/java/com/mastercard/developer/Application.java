@@ -13,9 +13,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-    private UserExecutor userExecutor;
+    private final UserExecutor userExecutor;
 
-    private AccountExecutor accountExecutor;
+    private final AccountExecutor accountExecutor;
 
     @Autowired
     public Application(UserExecutor userExecutor, AccountExecutor accountExecutor) {

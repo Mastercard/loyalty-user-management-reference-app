@@ -1,7 +1,7 @@
 package com.mastercard.developer.response;
 
 import com.google.common.collect.Lists;
-import org.openapitools.client.model.PagedUserSearchResponse;
+import org.openapitools.client.model.PagedResponseOfUserSearchResponse;
 import org.openapitools.client.model.UserAddress;
 import org.openapitools.client.model.UserEnrollResponse;
 import org.openapitools.client.model.UserSearchResponse;
@@ -19,7 +19,7 @@ public class MockUserResponses {
     public static final String DUP_REQ_REASON_CODE = "DUPLICATE_REQUEST";
     public static final String DUP_REQ_DESCRIPTION = "The User has already exists for the given Company ID.";
     public static final String SER_ERR_REASON_CODE = "SERVICE_ERROR";
-    public static final String SER_ERR_DESCRIPTION = "User unique Reference ID could not be found.";
+    public static final String SER_ERR_DESCRIPTION = "User ID could not be found.";
 
     public static UserEnrollResponse getEnrollResponse(boolean addAccount) {
         UserEnrollResponse enrollResponse = new UserEnrollResponse();
@@ -67,8 +67,8 @@ public class MockUserResponses {
                 .id(USER_ID);
     }
 
-    public static PagedUserSearchResponse getPagedSearchResponse() {
-        PagedUserSearchResponse pagedSearchResponse = new PagedUserSearchResponse();
+    public static PagedResponseOfUserSearchResponse getPagedSearchResponse() {
+        PagedResponseOfUserSearchResponse pagedSearchResponse = new PagedResponseOfUserSearchResponse();
         return pagedSearchResponse.count(1)
                 .limit(10)
                 .offset(0)

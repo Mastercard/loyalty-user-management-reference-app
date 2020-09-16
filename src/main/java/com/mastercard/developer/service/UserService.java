@@ -1,7 +1,7 @@
 package com.mastercard.developer.service;
 
 import com.mastercard.developer.exception.ServiceException;
-import org.openapitools.client.model.PagedUserSearchResponse;
+import org.openapitools.client.model.PagedResponseOfUserSearchResponse;
 import org.openapitools.client.model.UserEnrollRequest;
 import org.openapitools.client.model.UserEnrollResponse;
 import org.openapitools.client.model.UserSearchRequest;
@@ -17,7 +17,7 @@ public interface UserService {
 
     UserSearchResponse findById(String referenceId) throws ServiceException;
 
-    PagedUserSearchResponse search(UserSearchRequest userSearchRequest, Integer limit, Integer offset) throws ServiceException;
+    PagedResponseOfUserSearchResponse search(Integer offset, Integer limit, UserSearchRequest userSearchRequest) throws ServiceException;
 
     UserUpdateResponse update(String referenceId, UserUpdateRequest userUpdateRequest) throws ServiceException;
 }

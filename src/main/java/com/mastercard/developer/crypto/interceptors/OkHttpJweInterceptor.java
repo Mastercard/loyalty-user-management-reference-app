@@ -51,7 +51,7 @@ public class OkHttpJweInterceptor implements Interceptor {
 
             // Encrypt fields
             String encryptedPayload = JweExecutor.encryptPayload(requestPayload, jweConfig);
-            RequestBody encryptedBody = RequestBody.create(requestBody.contentType(), encryptedPayload);
+            RequestBody encryptedBody = RequestBody.create(encryptedPayload, requestBody.contentType());
 
             Request.Builder requestBuilder = request.newBuilder();
             return requestBuilder
@@ -82,7 +82,7 @@ public class OkHttpJweInterceptor implements Interceptor {
             // Decrypt fields
             String decryptedPayload = JweExecutor.decryptPayload(responsePayload, jweConfig);
             Response.Builder responseBuilder = response.newBuilder();
-            try (ResponseBody decryptedBody = ResponseBody.create(responseBody.contentType(), decryptedPayload)) {
+            try (ResponseBody decryptedBody = ResponseBody.create(decryptedPayload, responseBody.contentType())) {
                 return responseBuilder
                         .body(decryptedBody)
                         .header("Content-Length", String.valueOf(decryptedBody.contentLength()))

@@ -16,7 +16,7 @@ import org.openapitools.client.ApiResponse;
 import org.openapitools.client.model.AccountResponse;
 import org.openapitools.client.model.AccountSearchResponse;
 import org.openapitools.client.model.Error;
-import org.openapitools.client.model.PagedAccountSearchResponse;
+import org.openapitools.client.model.PagedResponseOfAccountSearchResponse;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -103,7 +103,7 @@ class AccountServiceImplTest {
     void testSearch() throws Exception {
         when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(200, new HashMap<>(), getPagedSearchResponse()));
 
-        PagedAccountSearchResponse pagedSearchResponse = accountService.search(AccountExample.getAccountSearchRequest(), 10, 0);
+        PagedResponseOfAccountSearchResponse pagedSearchResponse = accountService.search(0, 10, AccountExample.getAccountSearchRequest());
 
         verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));

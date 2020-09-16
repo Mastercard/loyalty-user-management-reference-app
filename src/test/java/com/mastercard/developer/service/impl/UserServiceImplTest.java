@@ -14,7 +14,7 @@ import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.ApiResponse;
 import org.openapitools.client.model.Error;
-import org.openapitools.client.model.PagedUserSearchResponse;
+import org.openapitools.client.model.PagedResponseOfUserSearchResponse;
 import org.openapitools.client.model.UserEnrollResponse;
 import org.openapitools.client.model.UserSearchResponse;
 import org.openapitools.client.model.UserUpdateResponse;
@@ -129,7 +129,7 @@ class UserServiceImplTest {
     void testSearch() throws Exception {
         when(apiClient.execute(any(Call.class), any(Type.class))).thenReturn(new ApiResponse<>(200, new HashMap<>(), getPagedSearchResponse()));
 
-        PagedUserSearchResponse pagedSearchResponse = userService.search(UserExample.getUserSearchRequest(), 10, 0);
+        PagedResponseOfUserSearchResponse pagedSearchResponse = userService.search(0, 10, UserExample.getUserSearchRequest());
 
         verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));

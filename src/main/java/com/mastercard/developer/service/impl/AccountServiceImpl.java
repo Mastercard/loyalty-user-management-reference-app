@@ -14,7 +14,7 @@ import org.openapitools.client.model.AccountSearchRequest;
 import org.openapitools.client.model.AccountSearchResponse;
 import org.openapitools.client.model.AccountUpdateRequest;
 import org.openapitools.client.model.Errors;
-import org.openapitools.client.model.PagedAccountSearchResponse;
+import org.openapitools.client.model.PagedResponseOfAccountSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 public class AccountServiceImpl implements AccountService {
 
-    private AccountManagementApi accountApi;
+    private final AccountManagementApi accountApi;
 
     @Autowired
     public AccountServiceImpl(ApiClient apiClient) {
@@ -91,17 +91,17 @@ public class AccountServiceImpl implements AccountService {
      * Success Response: 200(OK)
      * Error Response: 4XX or 5XX
      *
+     * @param offset               The number of items to offset the start of the list from (optional)
+     * @param limit                Can be used to limit the amount of results returned from a query (optional)
      * @param accountSearchRequest Account search request (required)
-     * @param limit                Number of records per page. (optional)
-     * @param offset               Result page you want to retrieve (0..N) (optional)
-     * @return An instance of PagedAccountSearchResponse
+     * @return An instance of PagedResponseOfAccountSearchResponse
      * @throws ServiceException If error occurred while calling account search endpoint
      */
     @Override
-    public PagedAccountSearchResponse search(AccountSearchRequest accountSearchRequest, Integer limit, Integer offset) throws ServiceException {
+    public PagedResponseOfAccountSearchResponse search(Integer offset, Integer limit, AccountSearchRequest accountSearchRequest) throws ServiceException {
         try {
             log.info("<-- CALLING ACCOUNT SEARCH ENDPOINT -->");
-            PagedAccountSearchResponse pagedAccountSearchResponse = accountApi.searchAccount(accountSearchRequest, limit, offset);
+            PagedResponseOfAccountSearchResponse pagedAccountSearchResponse = accountApi.searchAccount(offset, limit, accountSearchRequest);
             Assertions.assertNotNull(pagedAccountSearchResponse, "Missing object 'pagedAccountSearchResponse' when calling searchAccount(Async)");
             List<AccountSearchResponse> searchList = pagedAccountSearchResponse.getItems();
             Assertions.assertNotNull(searchList, "Missing Account search response items");

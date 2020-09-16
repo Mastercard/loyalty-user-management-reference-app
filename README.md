@@ -26,7 +26,7 @@
 - [License](#license)
 
 ## Overview <a name="overview"></a>
-This is a reference application to demonstrate how Loyalty User Management API can be used for the supported operations. Please see here for details on the API: [Mastercard Developers](https://developer.mastercard.com/loyalty-user-managemennt/documentation/).
+This is a reference application to demonstrate how Loyalty User Management API can be used for the supported operations. Please see here for details on the API: [Mastercard Developers](https://developer.mastercard.com/loyalty-user-management/documentation).
 This application illustrates connecting to the Loyalty User Management API with encryption. To call these APIs, consumer key, .p12 files and encryption certs are required from your [Mastercard Developers](https://developer.mastercard.com/dashboard) project.
 
 ### Compatibility <a name="compatibility"></a>
@@ -51,7 +51,7 @@ This application illustrates connecting to the Loyalty User Management API with 
 * Select `.p12` files from zip and copy it to `src/main/resources` in the project folder.
 * Open `${project.basedir}/src/main/resources/application.properties` and configure below parameters.
     
-    >**mastercard.api.base-path=https://sandbox.api.mastercard.com/loyalty/rewards/enrollment**, its a static field, will be used as a host to make API calls.
+    >**mastercard.api.base-path=https://sandbox.api.mastercard.com/loyalty/rewards**, its a static field, will be used as a host to make API calls.
     
     **Below properties will be required for authentication of API calls.**
     
@@ -123,16 +123,16 @@ Now that you have all the dependencies you need, you can generate the sources. T
   In the same menu, navigate to the commands **({Project name} > Lifecycle)**, select `clean` and `compile` then click the icon `Run Maven Build`. 
 
 `Using Terminal`
-* Navigate to the root directory of the project within a terminal window and execute `mvn clean compile` command.
+* Navigate to the root directory of the project within a terminal window and execute `./mvnw clean compile` command.
 
 ### Build and Execute <a name="build-and-execute"></a>
 Once you’ve added the correct properties, we can build the application. We can do this by navigating to the project’s base directory from the terminal and running the following command
 
-`mvn clean install`
+`./mvnw clean install`
 
 When the project builds successfully you can then run the following command to start the project
 
-`java -jar target/loyalty-user-management-reference-1.0.0.jar`
+`java -jar target/loyalty-user-management-reference-X.X.X.jar`
 
 ## Use Cases <a name="use-cases"></a>
 ### User
@@ -158,7 +158,7 @@ When the project builds successfully you can then run the following command to s
     
     | URL | Method | Request | Response |
     | :-- | :----- | :------ | :------- |
-    | `/users/searches` | POST | [UserSearchRequest](docs/UserSearchRequest.md) | [PagedUserSearchResponse](docs/PagedUserSearchResponse.md) |
+    | `/users/searches` | POST | [UserSearchRequest](docs/UserSearchRequest.md) | [PagedResponseOfUserSearchResponse](docs/PagedResponseOfUserSearchResponse.md) |
 
 > Case 4: [USER SEARCH BY ID](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/user-search/)
   - Retrieves a User’s details from Mastercard Rewards platform by Mastercard generated unique Id.
@@ -191,7 +191,7 @@ When the project builds successfully you can then run the following command to s
         
     | URL | Method | Request | Response |
     | :-- | :----- | :------ | :------- |
-    | `/accounts/searches` | POST | [AccountSearchRequest](docs/AccountSearchRequest.md) | [PagedAccountSearchResponse](docs/PagedAccountSearchResponse.md) |
+    | `/accounts/searches` | POST | [AccountSearchRequest](docs/AccountSearchRequest.md) | [PagedResponseOfAccountSearchResponse](docs/PagedResponseOfAccountSearchResponse.md) |
 
 > Case 3: [ACCOUNT SEARCH BY ID](https://developer.mastercard.com/loyalty-user-management/documentation/use-cases/account-search/)
   - Retrieves a User’s account details from Mastercard Rewards platform by Mastercard generated unique Id.
@@ -220,15 +220,15 @@ To develop a client application that consumes a RESTful Loyalty User Management 
 
 | API | Endpoint | HTTP Method | Encrypted Request | Encrypted Response | Description |
 | :-- | :------- | :---------- | :---------------- | :----------------- | :---------- |
-| [User Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users` | POST | YES | NO | User's demographic details enrollment into Mastercard Rewards platform. |
-| [User With Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users` | POST | YES | NO | User's demographic with Account details enrollment into Mastercard Rewards platform. |
-| [User Search By ID](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users/{id}` | GET | NO | YES | Retrieves a User’s details by Mastercard generated unique Id. |
-| [User Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users/searches` | POST | YES | YES | Retrieves a User’s details based on search criteria. |
-| [User Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/users/{id}` | PUT | YES | NO | Updates existing User’s demographic details. |
-| [Account Enrollment](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts` | POST | YES | NO | User’s account details enrollment into Mastercard Rewards platform. |
-| [Account Search By ID](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts/{id}` | GET | NO | YES | Retrieves a User’s account details by Mastercard generated unique Id. |
-| [Account Search](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts/searches` | POST | YES | YES | Retrieves a User’s account details based on search criteria. |
-| [Account Update](https://developer.mastercard.com/loyalty-user-managemennt/documentation/api-reference/specification/#apis) | `/accounts/{id}` | PUT | YES | NO | Updates existing User’s account status. |   
+| [User Enrollment](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/specification/#apis) | `/users` | POST | YES | NO | User's demographic details enrollment into Mastercard Rewards platform. |
+| [User With Account Enrollment](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/specification/#apis) | `/users` | POST | YES | NO | User's demographic with Account details enrollment into Mastercard Rewards platform. |
+| [User Search By ID](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/specification/#apis) | `/users/{id}` | GET | NO | YES | Retrieves a User’s details by Mastercard generated unique Id. |
+| [User Search](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/specification/#apis) | `/users/searches` | POST | YES | YES | Retrieves a User’s details based on search criteria. |
+| [User Update](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/specification/#apis) | `/users/{id}` | PUT | YES | NO | Updates existing User’s demographic details. |
+| [Account Enrollment](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/specification/#apis) | `/accounts` | POST | YES | NO | User’s account details enrollment into Mastercard Rewards platform. |
+| [Account Search By ID](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/specification/#apis) | `/accounts/{id}` | GET | NO | YES | Retrieves a User’s account details by Mastercard generated unique Id. |
+| [Account Search](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/specification/#apis) | `/accounts/searches` | POST | YES | YES | Retrieves a User’s account details based on search criteria. |
+| [Account Update](https://developer.mastercard.com/loyalty-user-management/documentation/api-reference/specification/#apis) | `/accounts/{id}` | PUT | YES | NO | Updates existing User’s account status. |   
 
 ### Authorization <a name="authorization"></a>
 The `com.mastercard.developer.interceptors` package will provide you with some request interceptor classes you can use when configuring your API client. These classes will take care of adding the correct `Authorization` header before sending the request.

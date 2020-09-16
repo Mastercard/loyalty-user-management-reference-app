@@ -4,7 +4,7 @@ import com.mastercard.developer.example.UserExample;
 import com.mastercard.developer.exception.ServiceException;
 import com.mastercard.developer.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.openapitools.client.model.PagedUserSearchResponse;
+import org.openapitools.client.model.PagedResponseOfUserSearchResponse;
 import org.openapitools.client.model.UserEnrollResponse;
 import org.openapitools.client.model.UserSearchResponse;
 import org.openapitools.client.model.UserUpdateResponse;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserExecutor {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserExecutor(UserService userService) {
@@ -69,10 +69,10 @@ public class UserExecutor {
      * USE CASE 3: USER SEARCH
      * It will retrieves User’s demographic details based on provided search criteria
      *
-     * @return An instance of PagedUserSearchResponse
+     * @return An instance of PagedResponseOfUserSearchResponse
      */
-    private PagedUserSearchResponse searchUser() throws ServiceException {
-        return userService.search(UserExample.getUserSearchRequest(), 25, 0);
+    private PagedResponseOfUserSearchResponse searchUser() throws ServiceException {
+        return userService.search(0, 25, UserExample.getUserSearchRequest());
     }
 
     /**
