@@ -18,7 +18,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <openapi-generator.version>4.3.1</openapi-generator.version>
+        <openapi-generator.version>5.1.0</openapi-generator.version>
         <oauth1-signer.version>1.5.0</oauth1-signer.version>
         <client-encryption.version>1.5.0</client-encryption.version>
         <nimbusds-jose-jwt.version>9.0</nimbusds-jose-jwt.version>
