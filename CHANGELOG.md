@@ -1,5 +1,12 @@
 # Change Log
 
+## Version 1.2.0
+_December 24, 2021_
+
+### Changed
+* OpenAPI Specification as per the latest Mastercard standards.
+* Bumped dependencies to the latest version.
+
 ## Version 1.1.0
 _September 16, 2020_
 

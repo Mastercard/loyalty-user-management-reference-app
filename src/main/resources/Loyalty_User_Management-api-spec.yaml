@@ -1,19 +1,21 @@
 openapi: 3.0.3
 info:
-  title: Loyalty User Management
+  title: Loyalty User Management API
   description: 'Loyalty User Management service allows clients to enroll users and their associated accounts into a reward program so that they can avail different promotions or reward benefits provided to their users. Subsequent to enrollment, clients can use this service to retrieve and update user or account information.'
   termsOfService: 'https://developer.mastercard.com/terms-of-use'
   contact:
-    name: Mastercard Developer Zone
-    url: 'https://developer.mastercard.com'
+    name: API Support
+    url: 'https://developer.mastercard.com/support'
     email: apisupport@mastercard.com
   license:
-    name: Mastercard Developer Zone Support
+    name: Mastercard Developer Support
     url: 'https://developer.mastercard.com/support'
-  version: 1.1.0
+  version: 1.2.0
 servers:
   - url: 'https://api.mastercard.com/loyalty/rewards'
-    description: Loyalty User Management
+    description: Production API
+  - url: 'https://sandbox.api.mastercard.com/loyalty/rewards'
+    description: Sandbox API
 tags:
   - name: User Management
     description: Multiple endpoints are available to perform different User management activities such as <ul><li>New user with account enrollment</li><li>New user enrollment without account</li><li>Update user demographic details</li><li>Fetch user details based on user identifier assigned by Mastercard on enrollment or via user number</li></ul>
@@ -24,458 +26,166 @@ paths:
     post:
       tags:
         - User Management
-      summary: Enroll users and their associated accounts into a reward program
+      summary: Enroll user and their associated account into a reward program
+      description: Enroll user with or without their associated account into a reward program.
       operationId: enrollUser
       x-mastercard-api-encrypted: true
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserEnrollRequest'
+        $ref: '#/components/requestBodies/UserEnrollRequest'
       responses:
         '201':
-          description: Successfully Enrolled User
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserEnrollResponse'
+          $ref: '#/components/responses/EnrollUserSuccessfully'
         '400':
-          description: Invalid Request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INVALID_REQUEST:
-                  value:
-                    Errors:
-                      Error:
-                        - Source: Loyalty-Enrollment
-                          ReasonCode: INVALID_FIELD_FORMAT_FIRST_NAME
-                          Description: First Name must be alphanumeric.
-                          Recoverable: false
-                          Details: null
+          $ref: '#/components/responses/EnrollUserInvalidRequest'
         '401':
-          description: Client could not be authorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                AUTHORIZATION_ERROR:
-                  $ref: '#/components/examples/error401'
-        '500':
-          description: Internal System Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INTERNAL_SYSTEM_ERROR:
-                  $ref: '#/components/examples/error500'
+          $ref: '#/components/responses/Unauthorized'
   /users/searches:
     post:
       tags:
         - User Management
-      summary: This endpoint allows clients to search and retrieve a user's information using a combination of the User Number and Company.
+      summary: Allows clients to search and retrieve a user's information.
+      description: This endpoint allows clients to search and retrieve a user's information using a combination of the User Number and Company.
       operationId: searchUser
       x-mastercard-api-encrypted: true
       parameters:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserSearchRequest'
+        $ref: '#/components/requestBodies/UserSearchRequest'
       responses:
         '200':
-          description: Successfully Retrieved User(s)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PagedResponseOfUserSearchResponse'
+          $ref: '#/components/responses/SearchUserSuccessfully'
         '400':
-          description: Invalid Request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INVALID_REQUEST:
-                  value:
-                    Errors:
-                      Error:
-                        - Source: Loyalty-Enrollment
-                          ReasonCode: MISSING_REQUIRED_FIELD_USER_NUMBER
-                          Description: User Number is required.
-                          Recoverable: false
-                          Details: null
+          $ref: '#/components/responses/SearchUserInvalidRequest'
         '401':
-          description: Client could not be authorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                AUTHORIZATION_ERROR:
-                  $ref: '#/components/examples/error401'
-        '500':
-          description: Internal System Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INTERNAL_SYSTEM_ERROR:
-                  $ref: '#/components/examples/error500'
+          $ref: '#/components/responses/Unauthorized'
   '/users/{id}':
     get:
       tags:
         - User Management
-      summary: This endpoint provides clients with the ability to retrieve a User's information using the User Id.
+      summary: Provides clients the ability to retrieve a User's information using the User Id.
+      description: This endpoint provides clients the ability to retrieve a User's information using the Mastercard generated User Id.
       operationId: findUser
       x-mastercard-api-encrypted: true
       parameters:
-        - name: id
-          in: path
-          description: User Id
-          required: true
-          style: simple
-          schema:
-            type: string
-          example: '2a53135b-c1f2-4cec-88a9-b0941304d9d7'
+        - $ref: '#/components/parameters/userId'
       responses:
         '200':
-          description: Successfully Retrieved User
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserSearchResponse'
+          $ref: '#/components/responses/FindUserSuccessfully'
         '404':
-          description: User Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                RESOURCE_NOT_FOUND:
-                  value:
-                    Errors:
-                      Error:
-                        - Source: Loyalty-Enrollment
-                          ReasonCode: SERVICE_ERROR
-                          Description: User ID could not be found.
-                          Recoverable: false
-                          Details: null
+          $ref: '#/components/responses/UserNotFound'
         '401':
-          description: Client could not be authorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                AUTHORIZATION_ERROR:
-                  $ref: '#/components/examples/error401'
-        '500':
-          description: Internal System Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INTERNAL_SYSTEM_ERROR:
-                  $ref: '#/components/examples/error500'
+          $ref: '#/components/responses/Unauthorized'
     put:
       tags:
         - User Management
-      summary: This endpoint provides clients with the ability to update existing enrolled user details.<br/> Please note while calling the endpoint make sure that all the attributes are provided in payload with values even if few attributes needs to be updated.
+      summary: Provides clients the ability to update existing enrolled user details.
+      description: This endpoint provides clients the ability to update existing enrolled user details.<br/> Please note while calling the endpoint make sure that all the attributes are provided in payload with values even if few attributes needs to be updated.
       operationId: updateUser
       x-mastercard-api-encrypted: true
       parameters:
-        - name: id
-          in: path
-          description: User Id
-          required: true
-          style: simple
-          schema:
-            type: string
-          example: '2a53135b-c1f2-4cec-88a9-b0941304d9d7'
+        - $ref: '#/components/parameters/userId'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserUpdateRequest'
+        $ref: '#/components/requestBodies/UserUpdateRequest'
       responses:
         '200':
-          description: Successfully Updated User
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserUpdateResponse'
+          $ref: '#/components/responses/UpdateUserSuccessfully'
         '400':
-          description: Invalid Request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INVALID_REQUEST:
-                  value:
-                    Errors:
-                      Error:
-                        - Source: Loyalty-Enrollment
-                          ReasonCode: INVALID_FIELD_VALUE_COMPANY_ID
-                          Description: Company ID does not exists.
-                          Recoverable: false
-                          Details: null
+          $ref: '#/components/responses/UpdateUserInvalidRequest'
         '401':
-          description: Client could not be authorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                AUTHORIZATION_ERROR:
-                  $ref: '#/components/examples/error401'
-        '500':
-          description: Internal System Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INTERNAL_SYSTEM_ERROR:
-                  $ref: '#/components/examples/error500'
+          $ref: '#/components/responses/Unauthorized'
   /accounts:
     post:
       tags:
         - Account Management
-      summary: This endpoint allows clients to enroll new accounts for an existing User into a rewards program.
+      summary: Allows clients to enroll new accounts for an existing User.
+      description: This endpoint allows clients to enroll new accounts for an existing User into a rewards program.
       operationId: enrollAccount
       x-mastercard-api-encrypted: true
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccountEnrollRequest'
+        $ref: '#/components/requestBodies/AccountEnrollRequest'
       responses:
         '201':
-          description: Successfully Enrolled Account
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountResponse'
+          $ref: '#/components/responses/EnrollAccountSuccessfully'
         '400':
-          description: Invalid Request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INVALID_REQUEST:
-                  value:
-                    Errors:
-                      Error:
-                        - Source: Loyalty-Enrollment
-                          ReasonCode: MISSING_REQUIRED_FIELD_ACCOUNT_NUMBER
-                          Description: Account Number is required.
-                          Recoverable: false
-                          Details: null
+          $ref: '#/components/responses/EnrollAccountInvalidRequest'
         '401':
-          description: Client could not be authorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                AUTHORIZATION_ERROR:
-                  $ref: '#/components/examples/error401'
-        '500':
-          description: Internal System Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INTERNAL_SYSTEM_ERROR:
-                  $ref: '#/components/examples/error500'
+          $ref: '#/components/responses/Unauthorized'
   /accounts/searches:
     post:
       tags:
         - Account Management
-      summary: This endpoint provides clients with the ability to search and retrieve an account's information using the combination of Company and Account Number
+      summary: Provides clients the ability to search and retrieve an account's information.
+      description: This endpoint provides clients with the ability to search and retrieve an account's information using the combination of Account Number and Company.
       operationId: searchAccount
       x-mastercard-api-encrypted: true
       parameters:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccountSearchRequest'
+        $ref: '#/components/requestBodies/AccountSearchRequest'
       responses:
         '200':
-          description: Successfully Retrieved Account(s)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PagedResponseOfAccountSearchResponse'
+          $ref: '#/components/responses/SearchAccountSuccessfully'
         '400':
-          description: Invalid Request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INVALID_REQUEST:
-                  value:
-                    Errors:
-                      Error:
-                        - Source: Loyalty-Enrollment
-                          ReasonCode: MISSING_REQUIRED_FIELD_ACCOUNT_NUMBER
-                          Description: Account Number is required.
-                          Recoverable: false
-                          Details: null
+          $ref: '#/components/responses/SearchAccountInvalidRequest'
         '401':
-          description: Client could not be authorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                AUTHORIZATION_ERROR:
-                  $ref: '#/components/examples/error401'
-        '500':
-          description: Internal System Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INTERNAL_SYSTEM_ERROR:
-                  $ref: '#/components/examples/error500'
+          $ref: '#/components/responses/Unauthorized'
   '/accounts/{id}':
     get:
       tags:
         - Account Management
-      summary: This endpoint provides clients with the ability to retrieve account details using the Account Id
+      summary: Provides clients the ability to retrieve account's information using the Account Id.
+      description: This endpoint provides clients the ability to retrieve account's information using the Mastercard generated Account Id.
       operationId: findAccount
       x-mastercard-api-encrypted: true
       parameters:
-        - name: id
-          in: path
-          description: Account Id
-          required: true
-          style: simple
-          schema:
-            type: string
-          example: 'd8753780-62d1-4775-9549-8ed92c48c290'
+        - $ref: '#/components/parameters/accountId'
       responses:
         '200':
-          description: Successfully Retrieved Account
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountSearchResponse'
+          $ref: '#/components/responses/FindAccountSuccessfully'
         '404':
-          description: Account Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                RESOURCE_NOT_FOUND:
-                  value:
-                    Errors:
-                      Error:
-                        - Source: Loyalty-Enrollment
-                          ReasonCode: SERVICE_ERROR
-                          Description: Account ID could not be found.
-                          Recoverable: false
-                          Details: null
+          $ref: '#/components/responses/AccountNotFound'
         '401':
-          description: Client could not be authorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                AUTHORIZATION_ERROR:
-                  $ref: '#/components/examples/error401'
-        '500':
-          description: Internal System Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INTERNAL_SYSTEM_ERROR:
-                  $ref: '#/components/examples/error500'
+          $ref: '#/components/responses/Unauthorized'
     put:
       tags:
         - Account Management
-      summary: This endpoint provides clients with the ability to update an existing account's status.
+      summary: Provides clients the ability to update an existing account's status.
+      description: This endpoint provides clients the ability to update an existing account's status.
       operationId: updateAccount
       x-mastercard-api-encrypted: true
       parameters:
-        - name: id
-          in: path
-          description: Account Id
-          required: true
-          style: simple
-          schema:
-            type: string
-          example: 'd8753780-62d1-4775-9549-8ed92c48c290'
+        - $ref: '#/components/parameters/accountId'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccountUpdateRequest'
+        $ref: '#/components/requestBodies/AccountUpdateRequest'
       responses:
         '200':
-          description: Successfully Updated Account
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountResponse'
+          $ref: '#/components/responses/UpdateAccountSuccessfully'
         '400':
-          description: Invalid Request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INVALID_REQUEST:
-                  value:
-                    Errors:
-                      Error:
-                        - Source: Loyalty-Enrollment
-                          ReasonCode: MISSING_REQUIRED_FIELD_STATUS
-                          Description: Status is required.
-                          Recoverable: false
-                          Details: null
+          $ref: '#/components/responses/UpdateAccountInvalidRequest'
         '401':
-          description: Client could not be authorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                AUTHORIZATION_ERROR:
-                  $ref: '#/components/examples/error401'
-        '500':
-          description: Internal System Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-              examples:
-                INTERNAL_SYSTEM_ERROR:
-                  $ref: '#/components/examples/error500'
+          $ref: '#/components/responses/Unauthorized'
 components:
   parameters:
+    userId:
+      name: id
+      in: path
+      description: User Id
+      required: true
+      style: simple
+      schema:
+        type: string
+      example: '2a53135b-c1f2-4cec-88a9-b0941304d9d7'
+    accountId:
+      name: id
+      in: path
+      description: Account Id
+      required: true
+      style: simple
+      schema:
+        type: string
+      example: 'd8753780-62d1-4775-9549-8ed92c48c290'
     offset:
       name: offset
       in: query
@@ -498,6 +208,37 @@ components:
         type: integer
         format: int32
       example: 25
+  requestBodies:
+    UserEnrollRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserEnrollRequest'
+    UserSearchRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserSearchRequest'
+    UserUpdateRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserUpdateRequest'
+    AccountEnrollRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountEnrollRequest'
+    AccountSearchRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountSearchRequest'
+    AccountUpdateRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountUpdateRequest'
   schemas:
     Account:
       title: Account
@@ -796,7 +537,7 @@ components:
           minLength: 0
           type: string
           description: 'Where appropriate, indicates detailed information about data received.'
-          example: null
+          example: Detailed information about data received.
     ErrorList:
       title: ErrorList
       required:
@@ -806,6 +547,7 @@ components:
         Error:
           minItems: 1
           type: array
+          description: The list of error messages
           items:
             $ref: '#/components/schemas/Error'
     Errors:
@@ -843,6 +585,7 @@ components:
         items:
           minItems: 0
           type: array
+          description: The list of Accounts that are in the entire collection
           items:
             $ref: '#/components/schemas/AccountSearchResponse'
     PagedResponseOfUserSearchResponse:
@@ -872,6 +615,7 @@ components:
         items:
           minItems: 0
           type: array
+          description: The list of Users that are in the entire collection
           items:
             $ref: '#/components/schemas/UserSearchResponse'
     UserAddress:
@@ -1293,22 +1037,215 @@ components:
           type: string
           description: Unique User identifier assigned by Mastercard and provided to client at the time of user enrollment response.
           example: 2a53135b-c1f2-4cec-88a9-b0941304d9d7
+  responses:
+    EnrollUserSuccessfully:
+      description: Successfully Enrolled User
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserEnrollResponse'
+    SearchUserSuccessfully:
+      description: Successfully Retrieved User(s)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PagedResponseOfUserSearchResponse'
+    FindUserSuccessfully:
+      description: Successfully Retrieved User
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserSearchResponse'
+    UpdateUserSuccessfully:
+      description: Successfully Updated User
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserUpdateResponse'
+    EnrollAccountSuccessfully:
+      description: Successfully Enrolled Account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountResponse'
+    SearchAccountSuccessfully:
+      description: Successfully Retrieved Account(s)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PagedResponseOfAccountSearchResponse'
+    FindAccountSuccessfully:
+      description: Successfully Retrieved Account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountSearchResponse'
+    UpdateAccountSuccessfully:
+      description: Successfully Updated Account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccountResponse'
+    EnrollUserInvalidRequest:
+      description: Enroll UserInvalid Request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            INVALID_REQUEST:
+              $ref: '#/components/examples/EnrollUserInvalidRequest'
+    SearchUserInvalidRequest:
+      description: Search User Invalid Request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            INVALID_REQUEST:
+              $ref: '#/components/examples/SearchUserInvalidRequest'
+    UserNotFound:
+      description: User Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            RESOURCE_NOT_FOUND:
+              $ref: '#/components/examples/UserNotFound'
+    UpdateUserInvalidRequest:
+      description: Update User Invalid Request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            INVALID_REQUEST:
+              $ref: '#/components/examples/UpdateUserInvalidRequest'
+    EnrollAccountInvalidRequest:
+      description: Enroll Account Invalid Request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            INVALID_REQUEST:
+              $ref: '#/components/examples/EnrollAccountInvalidRequest'
+    SearchAccountInvalidRequest:
+      description: Search Account Invalid Request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            INVALID_REQUEST:
+              $ref: '#/components/examples/SearchAccountInvalidRequest'
+    AccountNotFound:
+      description: Account Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            RESOURCE_NOT_FOUND:
+              $ref: '#/components/examples/AccountNotFound'
+    UpdateAccountInvalidRequest:
+      description: Update Account Invalid Request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            INVALID_REQUEST:
+              $ref: '#/components/examples/UpdateAccountInvalidRequest'
+    Unauthorized:
+      description: Client could not be authorized.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            AUTHORIZATION_ERROR:
+              $ref: '#/components/examples/Unauthorized'
   examples:
-    error401:
+    EnrollUserInvalidRequest:
+      value:
+        Errors:
+          Error:
+            - Source: Loyalty-Enrollment
+              ReasonCode: INVALID_FIELD_FORMAT_FIRST_NAME
+              Description: First Name must be alphanumeric.
+              Recoverable: false
+              Details: null
+    SearchUserInvalidRequest:
+      value:
+        Errors:
+          Error:
+            - Source: Loyalty-Enrollment
+              ReasonCode: MISSING_REQUIRED_FIELD_USER_NUMBER
+              Description: User Number is required.
+              Recoverable: false
+              Details: null
+    UserNotFound:
+      value:
+        Errors:
+          Error:
+            - Source: Loyalty-Enrollment
+              ReasonCode: INVALID_FIELD_VALUE_USER_ID
+              Description: User ID could not be found.
+              Recoverable: false
+              Details: null
+    UpdateUserInvalidRequest:
+      value:
+        Errors:
+          Error:
+            - Source: Loyalty-Enrollment
+              ReasonCode: INVALID_FIELD_VALUE_COMPANY_ID
+              Description: Company ID does not exists.
+              Recoverable: false
+              Details: null
+    EnrollAccountInvalidRequest:
+      value:
+        Errors:
+          Error:
+            - Source: Loyalty-Enrollment
+              ReasonCode: MISSING_REQUIRED_FIELD_ACCOUNT_NUMBER
+              Description: Account Number is required.
+              Recoverable: false
+              Details: null
+    SearchAccountInvalidRequest:
+      value:
+        Errors:
+          Error:
+            - Source: Loyalty-Enrollment
+              ReasonCode: MISSING_REQUIRED_FIELD_ACCOUNT_NUMBER
+              Description: Account Number is required.
+              Recoverable: false
+              Details: null
+    AccountNotFound:
+      value:
+        Errors:
+          Error:
+            - Source: Loyalty-Enrollment
+              ReasonCode: INVALID_FIELD_VALUE_ACCOUNT_ID
+              Description: Account ID could not be found.
+              Recoverable: false
+              Details: null
+    UpdateAccountInvalidRequest:
+      value:
+        Errors:
+          Error:
+            - Source: Loyalty-Enrollment
+              ReasonCode: MISSING_REQUIRED_FIELD_STATUS
+              Description: Status is required.
+              Recoverable: false
+              Details: null
+    Unauthorized:
       value:
         Errors:
           Error:
             - Source: Loyalty-Enrollment
               ReasonCode: AUTHORIZATION_ERROR
               Description: Client could not be authorized.
-              Recoverable: true
-              Details: null
-    error500:
-      value:
-        Errors:
-          Error:
-            - Source: Loyalty-Enrollment
-              ReasonCode: INTERNAL_SYSTEM_ERROR
-              Description: Internal System Error.
               Recoverable: true
               Details: null

@@ -43,6 +43,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -59,7 +60,7 @@ class UserServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        when(apiClient.buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any())).thenReturn(mock(Call.class));
+        when(apiClient.buildCall(nullable(String.class), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any())).thenReturn(mock(Call.class));
     }
 
     @Test
@@ -68,7 +69,7 @@ class UserServiceImplTest {
 
         UserEnrollResponse enrollResponse = userService.enrollUserOnly(UserExample.getUserEnrollRequest());
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         assertAll(
@@ -83,7 +84,7 @@ class UserServiceImplTest {
 
         UserEnrollResponse enrollResponse = userService.enrollUserAndAccount(UserExample.getUserAndAccountEnrollRequest());
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         assertAll(
@@ -102,7 +103,7 @@ class UserServiceImplTest {
 
         UserSearchResponse actual = userService.findById(USER_ID);
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         assertAll(
@@ -131,7 +132,7 @@ class UserServiceImplTest {
 
         PagedResponseOfUserSearchResponse pagedSearchResponse = userService.search(0, 10, UserExample.getUserSearchRequest());
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         assertAll(
@@ -165,7 +166,7 @@ class UserServiceImplTest {
 
         UserUpdateResponse updateResponse = userService.update(USER_ID, UserExample.getUserUpdateRequest());
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         assertAll(
@@ -180,7 +181,7 @@ class UserServiceImplTest {
 
         ServiceException serviceException = Assertions.assertThrows(ServiceException.class, () -> userService.enrollUserOnly(UserExample.getUserEnrollRequest()));
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         Assertions.assertNotNull(serviceException.getServiceErrors());
@@ -200,7 +201,7 @@ class UserServiceImplTest {
 
         ServiceException serviceException = Assertions.assertThrows(ServiceException.class, () -> userService.enrollUserAndAccount(UserExample.getUserAndAccountEnrollRequest()));
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         Assertions.assertNotNull(serviceException.getServiceErrors());
@@ -221,7 +222,7 @@ class UserServiceImplTest {
 
         ServiceException serviceException = Assertions.assertThrows(ServiceException.class, () -> userService.findById(UUID.randomUUID().toString()));
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         Assertions.assertNotNull(serviceException.getServiceErrors());

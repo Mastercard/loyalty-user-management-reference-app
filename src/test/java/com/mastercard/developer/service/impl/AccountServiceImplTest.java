@@ -40,6 +40,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -56,7 +57,7 @@ class AccountServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        when(apiClient.buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any())).thenReturn(mock(Call.class));
+        when(apiClient.buildCall(nullable(String.class), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any())).thenReturn(mock(Call.class));
     }
 
     @Test
@@ -65,7 +66,7 @@ class AccountServiceImplTest {
 
         AccountResponse accountResponse = accountService.enroll(AccountExample.getAccountEnrollRequest());
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         assertAll(
@@ -82,7 +83,7 @@ class AccountServiceImplTest {
 
         AccountSearchResponse actual = accountService.findById(ACCOUNT_ID);
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         assertAll(
@@ -105,7 +106,7 @@ class AccountServiceImplTest {
 
         PagedResponseOfAccountSearchResponse pagedSearchResponse = accountService.search(0, 10, AccountExample.getAccountSearchRequest());
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         assertAll(
@@ -133,7 +134,7 @@ class AccountServiceImplTest {
 
         AccountResponse accountResponse = accountService.update(ACCOUNT_ID, AccountExample.getAccountUpdateRequest());
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         assertAll(
@@ -148,7 +149,7 @@ class AccountServiceImplTest {
 
         ServiceException serviceException = Assertions.assertThrows(ServiceException.class, () -> accountService.enroll(AccountExample.getAccountEnrollRequest()));
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         Assertions.assertNotNull(serviceException.getServiceErrors());
@@ -169,7 +170,7 @@ class AccountServiceImplTest {
 
         ServiceException serviceException = Assertions.assertThrows(ServiceException.class, () -> accountService.findById(UUID.randomUUID().toString()));
 
-        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
+        verify(apiClient, atMostOnce()).buildCall(anyString(), anyString(), anyString(), anyList(), anyList(), any(), anyMap(), anyMap(), anyMap(), any(), any());
         verify(apiClient, atMostOnce()).execute(any(Call.class), any(Type.class));
 
         Assertions.assertNotNull(serviceException.getServiceErrors());
